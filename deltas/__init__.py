@@ -1,3 +1,2 @@
 from .apply import apply
-from . import segment_matcher
-from . import sequence_matcher
+from .matchers import segment_matcher, sequence_matcher

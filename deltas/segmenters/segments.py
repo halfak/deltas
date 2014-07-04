@@ -2,7 +2,7 @@ import types
 from hashlib import sha1
 from itertools import chain
 
-from ..util import iteration, LookAhead
+from ..util import LookAhead
 
 
 def generate_checksum(string):

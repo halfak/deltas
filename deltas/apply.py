@@ -1,17 +1,20 @@
-from ..types import Insert, Persist, Remove
+from .operations import Insert, Delete, Equal
 
 
-def apply(operations, a_tokens):
+def apply(operations, a_tokens, b_tokens):
     
     for operation in operations:
         
-        if isinstance(operation, Persist):
-            yield from a_tokens[operation.start:operation.end]
+        if isinstance(operation, Equal):
+            #print("Equal: {0}".format(str(a_tokens[operation.a1:operation.a2])))
+            yield from a_tokens[operation.a1:operation.a2]
         
         elif isinstance(operation, Insert):
-            yield from operation.tokens
+            #print("Insert: {0}".format(str(b_tokens[operation.b1:operation.b2])))
+            yield from b_tokens[operation.b1:operation.b2]
         
-        elif isinstance(operation, Remove):
+        elif isinstance(operation, Delete):
+            #print("Delete: {0}".format(str(a_tokens[operation.a1:operation.a2])))
             pass
         
         else:
