@@ -19,7 +19,6 @@ strategies more easily available.  There are currently two strategies available:
     and copies based on the use of a ``Segmenter``.
 
 :Example:
-
     >>> from deltas import segment_matcher, apply
     >>>
     >>> a_tokens = ["This", " ", "comes", " ", "first", ".",

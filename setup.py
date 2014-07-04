@@ -13,7 +13,7 @@ setup(
 	version = read('VERSION').strip(),
 	author = "Aaron Halfaker",
 	author_email = "ahalfaker@wikimedia.org",
-	description = ("A library for performing generating deltas (A.K.A sequences of operations) representing the difference between two sequences of comparable tokens."),
+	description = ("An experimental diff library for performing generating deltas (A.K.A sequences of operations) representing the difference between two sequences of comparable items."),
 	license = "MIT",
 	url = "https://github.com/halfak/Deltas",
 	packages=find_packages(),
@@ -23,5 +23,5 @@ setup(
 		"Development Status :: 4 - Beta",
 		"License :: OSI Approved :: MIT License",
 		"Topic :: Software Development :: Libraries :: Python Modules"
-	],
+	]
 )
