@@ -126,6 +126,6 @@ class SegmentNodeCollection(SegmentNode, list):
 
 class MatchableSegmentNodeCollection(SegmentNodeCollection,
                                      MatchableSegmentNode):
-    def __init__(self, children):
+    def __init__(self, children, match=None):
         SegmentNodeCollection.__init__(self, children)
-        MatchableSegmentNode.__init__(self, children)
+        MatchableSegmentNode.__init__(self, children, match=match)

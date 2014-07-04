@@ -1,3 +1,16 @@
+"""
+Provides a segmenter for splitting text tokens into
+:class:`~deltas.segmenters.paragraphs_sentences_and_whitespace.Paragraph`,
+:class:`~deltas.segmenters.paragraphs_sentences_and_whitespace.Sentence`, and
+:class:`~deltas.segmenters.paragraphs_sentences_and_whitespace.Whitespace`.
+
+
+.. autoclass:: deltas.segmenters.ParagraphsSentencesAndWhitespace
+    :members:
+.. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Paragraph
+.. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Sentence
+.. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Whitespace
+"""
 import re
 from .segmenter import Segmenter
 from .segments import Token, MatchableSegmentNodeCollection, \
@@ -9,9 +22,21 @@ PARAGRAPH_SPLIT_RE = re.compile("[\\t\\ \\r]*[\n][\\t\\ \\r]*[\n][\\t\\ \\r]*")
 SENTENCE_END_RE = re.compile("[.?!]+")
 MIN_SENTENCE_RE = 5
 
-class Paragraph(MatchableSegmentNodeCollection): pass
-class Sentence(MatchableTokenSequence):pass
-class Whitespace(TokenSequence):pass
+class Paragraph(MatchableSegmentNodeCollection):
+    """
+    A paragraph (matchable)
+    """
+    pass
+class Sentence(MatchableTokenSequence):
+    """
+    A sentence (matchable)
+    """
+    pass
+class Whitespace(TokenSequence):
+    """
+    Some whitespace (unmatchable)
+    """
+    pass
 
 class ParagraphsSentencesAndWhitespace(Segmenter):
     """

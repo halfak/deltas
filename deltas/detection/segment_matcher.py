@@ -1,7 +1,10 @@
 """
+Match segments
+--------------
+
 Performs a diffs using a tree of matchable segments in order to remain robust
 to content moves.  This module supports the use of a custom
-:class:`~segmenters.Segmenter`.
+:class:`~deltas.Segmenter`.
 
 :Example:
     >>> from deltas import segment_matcher, apply
@@ -35,6 +38,20 @@ from ..operations import Insert, Equal, Delete
 SEGMENTER = ParagraphsSentencesAndWhitespace()
 
 def diff(a, b, segmenter=SEGMENTER):
+    """
+    Performs a longest common substring diff.
+    
+    :Parameters:
+        a : sequence of `comparable`
+            Initial sequence
+        b : sequence of `comparable`
+            Changed sequence
+        segmenter : :class:`~deltas.Segmenter`
+            A segmenter to use on the tokens.
+        
+    :Returns:
+        An `iterable` of operations.
+    """
     # Cluster the input tokens
     a_segments = segmenter.segment(a)
     b_segments = segmenter.segment(b)

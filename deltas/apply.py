@@ -1,8 +1,27 @@
+"""
+Apply operations
+================
+"""
+
 from .operations import Insert, Delete, Equal
 
 
 def apply(operations, a_tokens, b_tokens):
+    """
+    Applies a sequences of operations to tokens -- copies tokens from
+    `a_tokens` and `b_tokens` according to `operations`.
     
+    :Parameters:
+        operations : sequence of :~class:`deltas.Operation`
+            Operations to perform
+        a_tokens : list of `comparable`
+            Starting sequence of comparable tokens
+        b_tokens : list of `comparable`
+            Ending list of comparable tokens
+        
+    :Returns:
+        A new list of tokens
+    """
     for operation in operations:
         
         if isinstance(operation, Equal):
