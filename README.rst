@@ -11,11 +11,11 @@ tokens.
 This library is intended to be used to make experimental difference detection
 strategies more easily available.  There are currently two strategies available:
 
-::class:`deltas.sequence_matcher`:
+:``deltas.sequence_matcher.diff()``:
     A shameless wrapper around `difflib.SequenceMatcher` to get it to work
     within the structure of *deltas*.
     
-::class:`deltas.segment_matcher`:
+:``deltas.sequence_matcher.diff()``:
     A generalized difference detector that is designed to detect block moves
     and copies based on the use of a :class:`~deltas.Segmenter`.
 
