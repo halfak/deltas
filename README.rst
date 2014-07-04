@@ -16,7 +16,7 @@ strategies more easily available.  There are currently two strategies available:
     within the structure of *deltas*.
 ``deltas.sequence_matcher.diff(a, b, segmenter=None)``:
     A generalized difference detector that is designed to detect block moves
-    and copies based on the use of a :class:`~deltas.Segmenter`.
+    and copies based on the use of a ``Segmenter``.
 
 :Example:
 
