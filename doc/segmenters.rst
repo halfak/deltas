@@ -13,3 +13,8 @@ Segmenters -- Join tokens into hierarchical clusters
 Paragraphs, Sentences and Whitespace
 ------------------------------------
 .. automodule:: deltas.segmenters.paragraphs_sentences_and_whitespace
+
+
+Segments
+------------------
+.. automodule:: deltas.segmenters.segments

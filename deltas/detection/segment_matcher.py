@@ -4,7 +4,7 @@ Match segments
 
 Performs a diffs using a tree of matchable segments in order to remain robust
 to content moves.  This module supports the use of a custom
-:class:`~deltas.Segmenter`.
+:class:`~deltas.segmenters.Segmenter`.
 
 :Example:
     >>> from deltas import segment_matcher, apply

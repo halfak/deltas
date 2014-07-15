@@ -1,5 +1,7 @@
 .. _deltas.detection:
 
+Detect differences
+==================
 .. automodule:: deltas.detection
 
 

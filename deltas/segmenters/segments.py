@@ -1,3 +1,45 @@
+"""
+Segments represent subsequences of tokens that have interesting properties.  All
+segments are based on two abstract types:
+
+:class:`deltas.segmenters.segments.IndexedSegment`
+    A segment of text with a ``start`` and ``end`` index that refers to the
+    original sequence of tokens.
+:class:`deltas.segmenters.segments.MatchableSegment`
+    A segment of text that can be matched with another segment no matter where
+    it appears in a document.  Generally segmnents of this type represent a
+    substantial collection of tokens.
+
+Segment Types
+^^^^^^^^^^^^^
+
+.. autoclass:: deltas.segmenters.segments.IndexedSegment
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.MatchableSegment
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.Token
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.SegmentNode
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.MatchableSegmentNode
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.TokenSequence
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.MatchableTokenSequence
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.SegmentNodeCollection
+    :members:
+
+.. autoclass:: deltas.segmenters.segments.MatchableSegmentNodeCollection
+    :members:
+"""
 import types
 from hashlib import sha1
 from itertools import chain
@@ -10,7 +52,10 @@ def generate_checksum(string):
     return sha1(bytes(string, 'utf-8', 'replace')).digest()
 
 class IndexedSegment:
-    
+    """
+    A segment of text with a ``start`` and ``end`` index that refers to the
+    original sequence of tokens.
+    """
     def __init__(self, start, end):
         self.start = int(start)
         self.end = int(end)
@@ -19,7 +64,11 @@ class IndexedSegment:
         return self.end - self.start
 
 class MatchableSegment:
-    
+    """
+    A segment of text that can be matched with another segment no matter where
+    it appears in a document.  Generally segmnents of this type represent a
+    substantial collection of tokens.
+    """
     def __init__(self, checksum, match=None):
         self.checksum = bytes(checksum)
         self.match = match
@@ -41,7 +90,16 @@ class MatchableSegment:
 
 
 class Token(MatchableSegment, IndexedSegment):
+    """
+    A token of content.  Both indexed and matchable
     
+    :Parameters:
+        start : int
+            The index at which the token appears in the original token sequence.
+        content : `str`
+            The content of the token.
+        
+    """
     def __new__(cls, *args):
         if len(args) == 1:
             if isinstance(args[0], cls):
@@ -76,7 +134,14 @@ class Token(MatchableSegment, IndexedSegment):
     def tokens(self): yield self
 
 class SegmentNode(IndexedSegment, list):
+    """
+    An indexed list of :class:`~deltas.segmenters.segments.IndexedSegment`.
     
+    :Parameters:
+        children : :class:`~deltas.segmenters.segments.IndexedSegment`.
+            All segment node children
+    
+    """
     def __init__(self, children):
         list.__init__(self, children)
         IndexedSegment.__init__(self, self[0].start, self[-1].end)
@@ -88,7 +153,14 @@ class SegmentNode(IndexedSegment, list):
 
 
 class MatchableSegmentNode(MatchableSegment, SegmentNode):
-
+    """
+    A matchable indexed list of :class:`~deltas.segmenters.segments.SegmentNode`.
+    
+    :Parameters:
+        children : :class:`~deltas.segmenters.segments.SegmentNode`.
+            All segment node children
+    
+    """
     def __init__(self, children, match=None):
         SegmentNode.__init__(self, children)
         checksum = generate_checksum("".join(str(t)
@@ -98,7 +170,14 @@ class MatchableSegmentNode(MatchableSegment, SegmentNode):
         MatchableSegment.__init__(self, checksum, match=match)
 
 class TokenSequence(SegmentNode):
+    """
+    An list of :class:`~deltas.segmenters.segments.Token`.
     
+    :Parameters:
+        tokens : :class:`~deltas.segmenters.segments.Token`.
+            All token children
+    
+    """
     def __init__(self, tokens):
         SegmentNode.__init__(self, tokens)
         
@@ -106,7 +185,14 @@ class TokenSequence(SegmentNode):
 
 
 class MatchableTokenSequence(MatchableSegment, TokenSequence):
-
+    """
+    A matchable list of :class:`~deltas.segmenters.segments.Token`.
+    
+    :Parameters:
+        tokens : :class:`~deltas.segmenters.segments.Token`.
+            All token children
+    
+    """
     def __init__(self, tokens, match=None):
         TokenSequence.__init__(self, tokens)
         hash = sha1(b"".join(bytes(t.content, 'utf-8') for t in tokens))
@@ -115,7 +201,14 @@ class MatchableTokenSequence(MatchableSegment, TokenSequence):
     
 
 class SegmentNodeCollection(SegmentNode, list):
+    """
+    A list of :class:`~deltas.segmenters.segments.SegmentNode`.
     
+    :Parameters:
+        tokens : :class:`~deltas.segmenters.segments.SegmentNode`.
+            All node children
+    
+    """
     def __init__(self, children):
         assert sum(isinstance(c, SegmentNode) for c in children) == len(children)
         SegmentNode.__init__(self, children)
@@ -126,6 +219,14 @@ class SegmentNodeCollection(SegmentNode, list):
 
 class MatchableSegmentNodeCollection(SegmentNodeCollection,
                                      MatchableSegmentNode):
+    """
+    A matchable list of :class:`~deltas.segmenters.segments.SegmentNode`.
+
+    :Parameters:
+     tokens : :class:`~deltas.segmenters.segments.SegmentNode`.
+         All node children
+
+    """
     def __init__(self, children, match=None):
         SegmentNodeCollection.__init__(self, children)
         MatchableSegmentNode.__init__(self, children, match=match)
