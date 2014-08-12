@@ -7,6 +7,7 @@ tokens.
 
 * **Installation:** **TODO**
 * **Repo**: `http://github.com/halfak/Deltas`_
+* **Documentation**: `http://pythonhosted.org/deltas/`_
 
 This library is intended to be used to make experimental difference detection
 strategies more easily available.  There are currently two strategies available:
