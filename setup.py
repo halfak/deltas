@@ -1,12 +1,14 @@
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
+
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 def requirements(fname):
-	for line in open(os.path.join(os.path.dirname(__file__), fname)):
-		yield line.strip()
+    return [line.strip()
+            for line in open(os.path.join(os.path.dirname(__file__), fname))]
 
 setup(
     name = "deltas",
