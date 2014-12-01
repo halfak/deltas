@@ -28,7 +28,8 @@ simple wrapper around :class:`difflib.SequenceMatcher`.
 
 from difflib import SequenceMatcher as SM
 
-from ..operations import Insert, Equal, Delete
+from ..operations import Delete, Equal, Insert
+
 
 def parse_replace(a1, a2, b1, b2):
     yield Delete(a1, a2, b1, b2)
@@ -59,6 +60,17 @@ def parse_opcodes(opcodes):
         for operation in parse(a_start, a_end, b_start, b_end):
             yield operation
     
+
+def SegmentMatcher(Detector):
+    
+    def __init__(self): pass
+    
+    def diff(a, b):
+        return diff(a, b)
+    
+    @classmethod
+    def from_config(cls, name):
+        return cls()
 
 def diff(a, b):
     """

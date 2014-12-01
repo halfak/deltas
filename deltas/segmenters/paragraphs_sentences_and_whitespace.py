@@ -12,15 +12,16 @@ Provides a segmenter for splitting text tokens into
 .. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Whitespace
 """
 import re
-from .segmenter import Segmenter
-from .segments import Token, MatchableSegmentNodeCollection, \
-                      MatchableTokenSequence, TokenSequence
+
 from ..util import LookAhead
+from .segmenter import Segmenter
+from .segments import (MatchableSegmentNodeCollection, MatchableTokenSequence,
+                       Token, TokenSequence)
 
 WHITESPACE_RE = re.compile("[\\r\\n\\t\\ ]+")
 PARAGRAPH_SPLIT_RE = re.compile("[\\t\\ \\r]*[\n][\\t\\ \\r]*[\n][\\t\\ \\r]*")
 SENTENCE_END_RE = re.compile("[.?!]+")
-MIN_SENTENCE_RE = 5
+MIN_SENTENCE = 5
 
 class Paragraph(MatchableSegmentNodeCollection):
     """
@@ -37,6 +38,15 @@ class Whitespace(TokenSequence):
     Some whitespace (unmatchable)
     """
     pass
+
+def prepare_regex(regex):
+    if hasattr(regex, "match"):
+        return regex
+    elif isinstance(regex, "str"):
+        return re.compile(regex)
+    else:
+        raise TypeError("Expected {0}, ".format(type(re.compile(" "))) + \
+                        "got {0}".format(type(whitespace)))
 
 class ParagraphsSentencesAndWhitespace(Segmenter):
     """
@@ -55,32 +65,16 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         min_sentence : int
             The minimum sentence length before accepting a sentence_end token.
     """
-    def __init__(self, *, whitespace=WHITESPACE_RE,
-                          paragraph_split=PARAGRAPH_SPLIT_RE,
-                          sentence_end=SENTENCE_END_RE,
-                          min_sentence=MIN_SENTENCE_RE):
+    def __init__(self, *, whitespace=None,
+                          paragraph_split=None,
+                          sentence_end=None,
+                          min_sentence=None):
         
+        self.whitespace = prepare_regex(whitespace or WHITESPACE_RE)
+        self.paragraph_split = prepare_regex(paragraph_split or PARAGRAPH_SPLIT_RE)
+        self.sentence_end = prepare_regex(sentence_end or SENTENCE_END_RE)
         
-        if not hasattr(whitespace, "match"):
-            raise TypeError("whitespace is the wrong type." + \
-                            "Expected {0}, ".format(type(re.compile(" "))) + \
-                            "got {0}".format(type(whitespace)))
-        self.whitespace = whitespace
-        
-        if not hasattr(paragraph_split, "match"):
-            raise TypeError("paragraph_split is the wrong type." + \
-                            "Expected {0}, ".format(type(re.compile(" "))) + \
-                            "got {0}".format(type(paragraph_split)))
-        self.paragraph_split = paragraph_split
-                
-        
-        if not hasattr(sentence_end, "match"):
-            raise TypeError("sentence_end is the wrong type." + \
-                            "Expected {0}, ".format(type(re.compile(" "))) + \
-                            "got {0}".format(type(sentence_end)))
-        self.sentence_end = sentence_end
-        
-        self.min_sentence = int(min_sentence)
+        self.min_sentence = int(min_sentence or MIN_SENTENCE)
     
     def segment(self, tokens):
         """
@@ -153,3 +147,6 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         
         return Paragraph(segments)
     
+    @classmethod
+    def from_config(cls, doc, name):
+        return cls(**doc['segmenters'][name])

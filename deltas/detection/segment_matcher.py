@@ -29,15 +29,40 @@ to content moves.  This module supports the use of a custom
 
 """
 from . import sequence_matcher
-from ..segmenters import Token, MatchableSegment, MatchableSegmentNode, \
-                         SegmentNodeCollection, \
-                         ParagraphsSentencesAndWhitespace
-
-from ..operations import Insert, Equal, Delete
+from ..operations import Delete, Equal, Insert
+from ..segmenters import (MatchableSegment, MatchableSegmentNode,
+                          ParagraphsSentencesAndWhitespace, Segmenter,
+                          SegmentNodeCollection, Token)
+from .detector import Detector
 
 SEGMENTER = ParagraphsSentencesAndWhitespace()
 
-def diff(a, b, segmenter=SEGMENTER):
+class SegmentMatcher(Detector):
+    
+    def __init__(self, segmenter=None):
+        segmenter = segmenter or SEGMENTER
+        
+        if hasattr(segmenter, "segment"):
+            self.segmenter = segmenter
+        else:
+            raise TypeError("Expected {0}, ".format(Segmenter) +
+                            "but got {0}.".format(segmenter))
+            
+        
+    def diff(self, a, b):
+        return diff(a, b, segmenter=self.segmenter)
+    
+    @classmethod
+    def from_config(cls, doc, name):
+        
+        segmenter_name = doc['detectors'][name]['segmenter']
+        segmenter_class_path = doc['segmenters'][segmenter_name]['class']
+        Segmenter = yamlconf.load_module(segmenter_class_path)
+        segmenter = Segmenter.from_config(doc, segmenter_name)
+        
+        return cls(segmenter=segmenter)
+
+def diff(a, b, segmenter=None):
     """
     Performs a longest common substring diff.
     
@@ -52,6 +77,8 @@ def diff(a, b, segmenter=SEGMENTER):
     :Returns:
         An `iterable` of operations.
     """
+    segmenter = segmenter or SEGMENTER
+    
     # Cluster the input tokens
     a_segments = segmenter.segment(a)
     b_segments = segmenter.segment(b)
@@ -215,5 +242,3 @@ def _process_delete(position, operation, a_token_clusters, b_token_clusters):
                      removed_tokens[-1].end,
                      position,
                      position)
-        
-    

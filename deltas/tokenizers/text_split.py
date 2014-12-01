@@ -2,6 +2,7 @@ import re
 
 from .tokenizer import Tokenizer
 
+
 class TextSplit(Tokenizer):
 	"""
 	Splits text into words, punctuation, whitespace and *everything else*.
@@ -22,3 +23,7 @@ class TextSplit(Tokenizer):
 			r"[\w]+|[,.?!]|[\n\ \t\r]+|.",
 			text
 		)
+	
+	@classmethod
+	def from_config(cls, doc, name):
+		return cls()

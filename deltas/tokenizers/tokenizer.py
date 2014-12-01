@@ -7,3 +7,7 @@ class Tokenizer:
         Extend this class for a custom tokenizer.
         """
         raise NotImplementedError()
+    
+    @classmethod
+    def from_config(cls, doc, name):
+        raise NotImplementedError()
