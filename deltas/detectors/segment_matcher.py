@@ -38,7 +38,9 @@ from .detector import Detector
 SEGMENTER = ParagraphsSentencesAndWhitespace()
 
 class SegmentMatcher(Detector):
-    
+    """
+    Constructs a fully configured SegmentMatcher detector.
+    """
     def __init__(self, segmenter=None):
         segmenter = segmenter or SEGMENTER
         

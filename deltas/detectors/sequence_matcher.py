@@ -61,8 +61,10 @@ def parse_opcodes(opcodes):
             yield operation
     
 
-def SegmentMatcher(Detector):
-    
+def SequenceMatcher(Detector):
+    """
+    Constructs a fully configured SegmentMatcher detector.
+    """
     def __init__(self): pass
     
     def diff(a, b):

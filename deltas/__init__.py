@@ -1,5 +1,6 @@
 from .apply import apply
 from .operations import Operation, Insert, Delete, Equal
-from .detection import segment_matcher, sequence_matcher
+from .detectors import segment_matcher, SegmentMatcher
+from .detectors import sequence_matcher, SequenceMatcher
 from .tokenizers import Tokenizer
 from .segmenters import Segmenter
