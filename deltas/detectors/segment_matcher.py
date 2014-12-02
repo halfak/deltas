@@ -122,10 +122,10 @@ def _match_segments(a_segment_map, b_segments):
             yield segment # Dump matched segment
             
         elif isinstance(segment, SegmentNodeCollection):
-            yield from _match_segments(a_segment_map, segment) # Recurse
+            for n in _match_segments(a_segment_map, segment): yield n # Recurse
             
         else:
-            yield from segment # Dump tokens
+            for t in segment: yield t # Dump tokens
         
     
 def _expand_unpatched_segments(a_segments):
@@ -134,9 +134,9 @@ def _expand_unpatched_segments(a_segments):
         if isinstance(segment, MatchableSegment) and segment.match != None:
             yield segment # Yield matched segment as cluster
         elif isinstance(segment, SegmentNodeCollection):
-            yield from _expand_unpatched_segments(segment) # Recurse
+            for s in _expand_unpatched_segments(segment): yield s # Recurse
         else:
-            yield from segment # Dump unmatched tokens
+            for t in segment: yield t # Dump unmatched tokens
 
 def _cluster_matching_segments(a_segments, b_segments):
     
