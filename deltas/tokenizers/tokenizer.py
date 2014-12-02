@@ -1,13 +1,14 @@
+import yamlconf
+
+
 class Tokenizer:
     """
     An abstract class representing the tokenizer interfact.
     """
-    def tokenize(self, text):
-        """
-        Extend this class for a custom tokenizer.
-        """
-        raise NotImplementedError()
+    def tokenize(self, text): raise NotImplementedError()
     
     @classmethod
     def from_config(cls, doc, name):
-        raise NotImplementedError()
+        tokenizer_class_path = doc['tokenizers'][name]['class']
+        Tokenizer = yamlconf.import_module(tokenizer_class_path)
+        return Tokenizer.from_config(doc, name)

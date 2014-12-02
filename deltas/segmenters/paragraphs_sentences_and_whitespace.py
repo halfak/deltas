@@ -149,4 +149,9 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
     
     @classmethod
     def from_config(cls, doc, name):
-        return cls(**doc['segmenters'][name])
+        return cls(
+            whitespace=doc['segmenters'][name].get('whitespace'),
+            paragraph_split=doc['segmenters'][name].get('paragraph_split'),
+            sentence_end=doc['segmenters'][name].get('sentence_end'),
+            min_sentence=doc['segmenters'][name].get('min_sentence')
+        )

@@ -57,10 +57,8 @@ class SegmentMatcher(Detector):
     @classmethod
     def from_config(cls, doc, name):
         
-        segmenter_name = doc['detectors'][name]['segmenter']
-        segmenter_class_path = doc['segmenters'][segmenter_name]['class']
-        Segmenter = yamlconf.load_module(segmenter_class_path)
-        segmenter = Segmenter.from_config(doc, segmenter_name)
+        segmenter = \
+                Segmenter.from_config(doc, doc['detectors'][name]['segmenter'])
         
         return cls(segmenter=segmenter)
 
