@@ -9,5 +9,6 @@ sequences of tokens.  So far, two such detectors are available:
     implementes :func:`~deltas.detection.segment_matcher.diff` that
     uses a :class:`~deltas.segmenters.Segmenter` to detect block moves
 """
+from .detector import Detector
 from .segment_matcher import SegmentMatcher
 from .sequence_matcher import SequenceMatcher

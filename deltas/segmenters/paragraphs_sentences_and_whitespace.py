@@ -42,7 +42,7 @@ class Whitespace(TokenSequence):
 def prepare_regex(regex):
     if hasattr(regex, "match"):
         return regex
-    elif isinstance(regex, "str"):
+    elif isinstance(regex, str):
         return re.compile(regex)
     else:
         raise TypeError("Expected {0}, ".format(type(re.compile(" "))) + \
