@@ -28,6 +28,8 @@ to content moves.  This module supports the use of a custom
     Delete(name='delete', a1=6, a2=7, b1=13, b2=13)
 
 """
+from collections import defaultdict
+
 from . import sequence_matcher
 from ..operations import Delete, Equal, Insert
 from ..segmenters import (MatchableSegment, MatchableSegmentNode,
@@ -100,15 +102,16 @@ def diff_segments(a_segments, b_segments):
                                  b_segment_tokens)
 
 def _build_segment_map(segments):
-    segment_map = {}
+    segment_map = defaultdict(lambda:[])
     for segment in segments:
         if isinstance(segment, MatchableSegment):
             
-            segment_map[segment] = segment
+            segment_map[segment].append(segment)
            
             if isinstance(segment, SegmentNodeCollection):
                 # If the children are not tokens
-                segment_map.update(_build_segment_map(segment))
+                for subsegments in _build_segment_map(segment).values():
+                    segment_map[subsegments[0]].extend(subsegments)
     
     return segment_map
 
@@ -116,9 +119,10 @@ def _build_segment_map(segments):
 def _match_segments(a_segment_map, b_segments):
     for segment in b_segments:
         if isinstance(segment, MatchableSegment) and segment in a_segment_map:
-            matched_segment = a_segment_map[segment]
-            matched_segment.match = segment
-            segment.match = matched_segment
+            matched_segments = a_segment_map[segment] # Get matches
+            for matched_segment in matched_segments: # For each match
+                matched_segment.match = segment # flag as matched
+            segment.match = matched_segments[0] # Always associate with first match
             yield segment # Dump matched segment
             
         elif isinstance(segment, SegmentNodeCollection):
@@ -131,7 +135,7 @@ def _match_segments(a_segment_map, b_segments):
 def _expand_unpatched_segments(a_segments):
     for segment in a_segments:
         # Check if a segment is matched.
-        if isinstance(segment, MatchableSegment) and segment.match != None:
+        if isinstance(segment, MatchableSegment) and segment.match is not None:
             yield segment # Yield matched segment as cluster
         elif isinstance(segment, SegmentNodeCollection):
             for s in _expand_unpatched_segments(segment): yield s # Recurse
