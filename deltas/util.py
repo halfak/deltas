@@ -1,7 +1,7 @@
 
 class LookAhead:
-    
-    class DONE: pass
+    class DONE:
+        def __len__(self): return 0
     
     def __new__(cls, it):
         if isinstance(it, cls):
@@ -44,8 +44,11 @@ class LookAhead:
     def pop(self):
         return self.__next__()
     
-    def peek(self):
-        return self.next
+    def peek(self, default=DONE):
+        if not self.empty():
+            return self.next
+        else:
+            return default
     
     def empty(self):
         return self.next == self.DONE

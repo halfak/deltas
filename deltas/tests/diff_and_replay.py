@@ -1,7 +1,7 @@
 from nose.tools import eq_
 
 from ..apply import apply
-from ..tokenizers import TextSplit
+from ..tokenizers import text_split
 
 
 def diff_and_replay(diff, tokenizer=None):
@@ -20,9 +20,8 @@ def diff_and_replay(diff, tokenizer=None):
     
     This is another sentence. This sentence is going to get copied.
     """
-    tokenizer = tokenizer or TextSplit()
-    a_tokens = tokenizer.tokenize(a)
-    b_tokens = tokenizer.tokenize(b)
+    a_tokens = list(text_split.tokenize(a))
+    b_tokens = list(text_split.tokenize(b))
     operations = list(diff(a_tokens, b_tokens))
     
     for op in operations:

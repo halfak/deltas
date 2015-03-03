@@ -1,20 +1,22 @@
 from nose.tools import eq_
 
-from ..text_split import text_split
+from ..wikitext_split import wikitext_split
 
 
-def test_simple_text_split():
+def test_wikitext_split():
     
     
     input = "As a sentence, this includes punctuation. \n" + \
             "\n" + \
+            "==Header!==" + \
             "And then we have another sentence here!"
     
     expected = ['As', ' ', 'a', ' ', 'sentence', ',', ' ', 'this', ' ',
-                'includes', ' ', 'punctuation', '.', ' \n\n', 'And', ' ',
+                'includes', ' ', 'punctuation', '.', ' \n\n',
+                '==', 'Header', '!', '==', 'And', ' ',
                 'then', ' ', 'we', ' ', 'have', ' ', 'another', ' ', 'sentence',
                 ' ', 'here', '!']
     
-    tokens = list(text_split.tokenize(input))
+    tokens = list(wikitext_split.tokenize(input))
     
     eq_(tokens, expected)

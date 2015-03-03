@@ -32,9 +32,9 @@ from collections import defaultdict
 
 from . import sequence_matcher
 from ..operations import Delete, Equal, Insert
-from ..segmenters import (MatchableSegment, MatchableSegmentNode,
-                          ParagraphsSentencesAndWhitespace, Segmenter,
-                          SegmentNodeCollection, Token)
+from ..segmenters import (MatchableSegment, ParagraphsSentencesAndWhitespace,
+                          Segment, Segmenter)
+from ..tokenizers import Token
 from .detector import Detector
 
 SEGMENTER = ParagraphsSentencesAndWhitespace()
@@ -58,9 +58,9 @@ class SegmentMatcher(Detector):
     
     @classmethod
     def from_config(cls, doc, name):
-        
-        segmenter = \
-                Segmenter.from_config(doc, doc['detectors'][name]['segmenter'])
+        section = doc['detectors'][name]
+        segmenter = Segmenter.from_config(doc,
+                                          section['segmenter'])
         
         return cls(segmenter=segmenter)
 
@@ -79,6 +79,7 @@ def diff(a, b, segmenter=None):
     :Returns:
         An `iterable` of operations.
     """
+    a, b = list(a), list(b)
     segmenter = segmenter or SEGMENTER
     
     # Cluster the input tokens
@@ -88,6 +89,8 @@ def diff(a, b, segmenter=None):
     return diff_segments(a_segments, b_segments)
 
 def diff_segments(a_segments, b_segments):
+    
+    a_segments, b_segments = list(a_segments), list(b_segments)
     
     # Match and re-sequence unmatched tokens
     a_segment_tokens, b_segment_tokens = _cluster_matching_segments(a_segments,
@@ -101,47 +104,6 @@ def diff_segments(a_segments, b_segments):
                                  a_segment_tokens,
                                  b_segment_tokens)
 
-def _build_segment_map(segments):
-    segment_map = defaultdict(lambda:[])
-    for segment in segments:
-        if isinstance(segment, MatchableSegment):
-            
-            segment_map[segment].append(segment)
-           
-            if isinstance(segment, SegmentNodeCollection):
-                # If the children are not tokens
-                for subsegments in _build_segment_map(segment).values():
-                    segment_map[subsegments[0]].extend(subsegments)
-    
-    return segment_map
-
-
-def _match_segments(a_segment_map, b_segments):
-    for segment in b_segments:
-        if isinstance(segment, MatchableSegment) and segment in a_segment_map:
-            matched_segments = a_segment_map[segment] # Get matches
-            for matched_segment in matched_segments: # For each match
-                matched_segment.match = segment # flag as matched
-            segment.match = matched_segments[0] # Always associate with first match
-            yield segment # Dump matched segment
-            
-        elif isinstance(segment, SegmentNodeCollection):
-            for n in _match_segments(a_segment_map, segment): yield n # Recurse
-            
-        else:
-            for t in segment: yield t # Dump tokens
-        
-    
-def _expand_unpatched_segments(a_segments):
-    for segment in a_segments:
-        # Check if a segment is matched.
-        if isinstance(segment, MatchableSegment) and segment.match is not None:
-            yield segment # Yield matched segment as cluster
-        elif isinstance(segment, SegmentNodeCollection):
-            for s in _expand_unpatched_segments(segment): yield s # Recurse
-        else:
-            for t in segment: yield t # Dump unmatched tokens
-
 def _cluster_matching_segments(a_segments, b_segments):
     
     # Generate a look-up map for matchable segments in 'a'
@@ -151,7 +113,7 @@ def _cluster_matching_segments(a_segments, b_segments):
     b_segment_tokens = list(_match_segments(a_segment_map, b_segments))
     
     # Expand unmatched segments from 'a'
-    a_segment_tokens = list(_expand_unpatched_segments(a_segments))
+    a_segment_tokens = list(_expand_unmatched_segments(a_segments))
     
     return a_segment_tokens, b_segment_tokens
 
@@ -181,7 +143,63 @@ def _expand_clustered_ops(operations, a_token_clusters, b_token_clusters):
             
             yield new_op
             position = position + (new_op.b2 - new_op.b1)
+
+def _build_segment_map(segments):
+    d = defaultdict(list)
+    for matchable_segment in _get_matchable_segments(segments):
+        d[matchable_segment].append(matchable_segment)
+    
+    return d
+
+def _get_matchable_segments(segments):
+    """
+    Performs a depth-first search of the segment tree to get all matchable
+    segments.
+    """
+    for subsegment in segments:
+        if isinstance(subsegment, Token):
+            break # No tokens allowed next to segments
+        if isinstance(subsegment, Segment):
+            if isinstance(subsegment, MatchableSegment):
+                yield subsegment
             
+            for matchable_subsegment in _get_matchable_segments(subsegment):
+                yield matchable_subsegment
+    
+
+def _match_segments(a_segment_map, b_segments):
+    for subsegment in b_segments:
+        if isinstance(subsegment, Segment):
+            
+            if isinstance(subsegment, MatchableSegment) and \
+               subsegment in a_segment_map:
+                matched_segments = a_segment_map[subsegment] # Get matches
+                for matched_segment in matched_segments: # For each match
+                    matched_segment.match = subsegment # flag as matched
+                subsegment.match = matched_segments[0] # Always associate with first match
+                yield subsegment # Dump matched segment
+            
+            else:
+                for seg_or_tok in _match_segments(a_segment_map, subsegment):
+                    yield seg_or_tok # Recurse
+            
+        else:
+            yield subsegment # Dump token
+        
+    
+def _expand_unmatched_segments(a_segments):
+    for subsegment in a_segments:
+        # Check if a segment is matched.
+        if isinstance(subsegment, Segment):
+            
+            if isinstance(subsegment, MatchableSegment) and \
+               subsegment.match is not None:
+                yield subsegment # Yield matched segment as cluster
+            else:
+                for seg_or_tok in _expand_unmatched_segments(subsegment):
+                    yield seg_or_tok # Recurse
+        else:
+            yield subsegment # Dump token
 
 def _process_equal(position, operation, a_token_clusters, b_token_clusters):
     yield Equal(a_token_clusters[operation.a1].start,
@@ -190,7 +208,6 @@ def _process_equal(position, operation, a_token_clusters, b_token_clusters):
                 b_token_clusters[operation.b2-1].end)
 
 def _process_insert(position, operation, a_token_clusters, b_token_clusters):
-    
     inserted_tokens = []
     for token_or_segment in b_token_clusters[operation.b1:operation.b2]:
         

@@ -87,5 +87,6 @@ def diff(a, b):
     :Returns:
         An `iterable` of operations.
     """
+    a, b = list(a), list(b)
     opcodes = SM(None, a, b).get_opcodes()
     return parse_opcodes(opcodes)

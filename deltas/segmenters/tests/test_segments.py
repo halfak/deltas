@@ -1,51 +1,46 @@
 from nose.tools import eq_
 
-from ..segments import Token, IndexedSegment, MatchableSegment, \
-                       TokenSequence, MatchableTokenSequence, \
-                       SegmentNodeCollection, MatchableSegmentNodeCollection
+from ...tokenizers import Token
+from ..segments import MatchableSegment, Segment
 
-def test_matchable_types():
+
+def test_matchable_segment():
     
-    tokens = ["foo", " ", "bar", " ", "baz"]
+    words = ["foo", "bar", "baz"]
     
-    ms = MatchableSegment(b"checksum test", match="derp")
+    ms = MatchableSegment([Token(c, i) for i, c in enumerate(words)])
+    eq_(ms.start, 0)
+    eq_(ms.end, len(words))
     hash(ms)
+    eq_(ms.match, None)
+    ms.match = "derp"
     eq_(ms.match, "derp")
     
-    t = Token(0, tokens[0])
-    hash(t)
+    d = {}
+    d[ms] = ms
     
-    mts = MatchableTokenSequence([Token(i, c) for i, c in enumerate(tokens)])
-    hash(mts)
+    ms2 = MatchableSegment([Token(c, i) for i, c in enumerate(words)])
+    assert ms2 in d
     
-    msnc = MatchableSegmentNodeCollection(
-            [MatchableTokenSequence([Token(i, c) for i, c in enumerate(tokens)])])
-    hash(msnc)
-
-def test_indexable_types():
-    tokens = ["foo", " ", "bar", " ", "baz"]
+def test_segment():
     
-    iis = IndexedSegment(0, 1)
-    eq_(iis.start, 0)
-    eq_(iis.end, 1)
-    eq_(len(iis), 1)
+    words = ["foo", "bar", "baz"]
     
-    t = Token(0, tokens[0])
-    eq_(t.start, 0)
-    eq_(t.end, 1)
-    eq_(len(t), 1)
-    
-    ts = TokenSequence([Token(i, c) for i, c in enumerate(tokens)])
-    eq_(ts.start, 0)
-    eq_(ts.end, len(tokens))
-    
-    snc = SegmentNodeCollection(
-            [TokenSequence([Token(i, c) for i, c in enumerate(tokens)])])
-    eq_(snc.start, 0)
-    eq_(snc.end, len(tokens))
+    ms = Segment([Token(c, i) for i, c in enumerate(words)])
+    eq_(ms.start, 0)
+    eq_(ms.end, len(words))
 
 def test_equality():
-    t1 = Token(0, "foo")
-    t2 = Token(1, "foo")
-    eq_(hash(t1), hash(t2))
-    eq_(t1, t2)
+    print(hash(MatchableSegment([Token("zero", 0), Token("one", 1)])))
+    print(hash(MatchableSegment([Token("zero", 10), Token("one", 11)])))
+    eq_(MatchableSegment([Token("zero", 0), Token("one", 1)]),
+        MatchableSegment([Token("zero", 10), Token("one", 11)]))
+    eq_(MatchableSegment([
+            MatchableSegment([Token("zero", 0), Token("one", 1)]),
+            MatchableSegment([Token("two", 2), Token("three", 3)])
+        ]),
+        MatchableSegment([
+            MatchableSegment([Token("zero", 10), Token("one", 11)]),
+            MatchableSegment([Token("two", 12), Token("three", 13)])
+        ]),
+    )

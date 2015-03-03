@@ -1,29 +1,17 @@
-import re
+from .tokenizer import RegexTokenizer
 
-from .tokenizer import Tokenizer
+LEXICON = [
+    ('word',          r'[^[\W\d]+'),
+    ('number',        r'[\d]+'),
+    ('period',        r'\.+'),
+    ('qmark',         r'\?+'),
+    ('epoint',        r'!+'),
+    ('comma',         r',+'),
+    ('colon',         r':+'),
+    ('scolon',        r';+'),
+    ('break',         r'(\n|\n\r|\r\n)\s*(\n|\n\r|\r\n)+'),
+    ('whitespace',    r'[\n\r\s]+'),
+    ("etc",           r".")
+]
 
-
-class TextSplit(Tokenizer):
-	"""
-	Splits text into words, punctuation, whitespace and *everything else*.
-	"""
-	
-	def tokenize(self, text):
-		"""
-		Tokenizes text.
-		
-		:Parameters:
-			text : str
-				Text to be tokenized
-			
-		:Returns:
-			a `list` of `str` tokens
-		"""
-		return re.findall(
-			r"[\w]+|[,.?!]|[\n\ \t\r]+|.",
-			text
-		)
-	
-	@classmethod
-	def from_config(cls, doc, name):
-		return cls()
+text_split = RegexTokenizer(LEXICON)

@@ -13,69 +13,71 @@ Provides a segmenter for splitting text tokens into
 """
 import re
 
+from more_itertools import peekable
+
 from ..util import LookAhead
 from .segmenter import Segmenter
-from .segments import (MatchableSegmentNodeCollection, MatchableTokenSequence,
-                       Token, TokenSequence)
+from .segments import MatchableSegment, Segment
 
-WHITESPACE_RE = re.compile("[\\r\\n\\t\\ ]+")
-PARAGRAPH_SPLIT_RE = re.compile("[\\t\\ \\r]*[\n][\\t\\ \\r]*[\n][\\t\\ \\r]*")
-SENTENCE_END_RE = re.compile("[.?!]+")
+WHITESPACE = set(["whitespace", "break"])
+PARAGRAPH_END = set(["break"])
+SENTENCE_END = set(["period", "epoint", "qmark"])
 MIN_SENTENCE = 5
 
-class Paragraph(MatchableSegmentNodeCollection):
-    """
-    A paragraph (matchable)
-    """
-    pass
-class Sentence(MatchableTokenSequence):
-    """
-    A sentence (matchable)
-    """
-    pass
-class Whitespace(TokenSequence):
-    """
-    Some whitespace (unmatchable)
-    """
-    pass
-
-def prepare_regex(regex):
-    if hasattr(regex, "match"):
-        return regex
-    elif isinstance(regex, str):
-        return re.compile(regex)
-    else:
-        raise TypeError("Expected {0}, ".format(type(re.compile(" "))) + \
-                        "got {0}".format(type(whitespace)))
-
 class ParagraphsSentencesAndWhitespace(Segmenter):
-    """
-    Constructs a segmenter that clusters text into :class:`Paragraph`,
-    :class:`Sentence` and :class:`Whitespace` segments.  Paragraphs and
-    sentences are matchable, while whitespace is not matchable.
-    
-    :Parameters:
-        whitespace : :class:`SRE_Pattern`
-            A regular expression pattern that matches whitespace tokens.
-        paragraph_split : :class:`SRE_Pattern`
-            A regular expression pattern that matches paragraph delimiting
-            tokens.
-        sentence_end : :class:`SRE_Pattern`
-            A regular expression pattern that matches the end of paragraphs
-        min_sentence : int
-            The minimum sentence length before accepting a sentence_end token.
-    """
     def __init__(self, *, whitespace=None,
-                          paragraph_split=None,
+                          paragraph_end=None,
                           sentence_end=None,
                           min_sentence=None):
         
-        self.whitespace = prepare_regex(whitespace or WHITESPACE_RE)
-        self.paragraph_split = prepare_regex(paragraph_split or PARAGRAPH_SPLIT_RE)
-        self.sentence_end = prepare_regex(sentence_end or SENTENCE_END_RE)
-        
+        self.whitespace = set(whitespace or WHITESPACE)
+        self.paragraph_end = set(paragraph_end or PARAGRAPH_END)
+        self.sentence_end = set(sentence_end or SENTENCE_END)
         self.min_sentence = int(min_sentence or MIN_SENTENCE)
     
+    def segment(self, tokens):
+        
+        look_ahead = LookAhead(tokens)
+
+        segments = []
+
+        while not look_ahead.empty():
+            
+            if look_ahead.peek().type not in self.whitespace: # Paragraph!
+                paragraph = MatchableSegment()
+                
+                while not look_ahead.empty() and \
+                      look_ahead.peek().type not in self.paragraph_end:
+
+                    if look_ahead.peek().type not in self.whitespace: #Sentence!
+                        sentence = MatchableSegment([next(look_ahead)])
+                        
+                        while not look_ahead.empty() and \
+                              look_ahead.peek().type not in self.paragraph_end:
+                            
+                            sentence.append(next(look_ahead))
+                            
+                            if sentence[-1].type in self.sentence_end:
+                                non_whitespace = sum(s.type not in self.whitespace for s in sentence)
+                                if non_whitespace >= self.min_sentence:
+                                    break
+                            
+                        
+                        paragraph.append(sentence)
+                        
+                    else:
+                        whitespace = Segment([next(look_ahead)])
+                        paragraph.append(whitespace)
+                
+                segments.append(paragraph)
+            else:
+                whitespace = Segment([next(look_ahead)])
+                segments.append(whitespace)
+            
+        
+        return segments
+    
+    '''
     def segment(self, tokens):
         """
         Clusters a sequence of tokens into a list of segments.
@@ -87,71 +89,67 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         :Returns:
             A `list` of :class:`Segment`
         """
-        self.look_ahead = LookAhead(tokens)
+        look_ahead = LookAhead(tokens)
 
-        segments = []
-
-        while not self.look_ahead.empty():
-            if self.whitespace.match(self.look_ahead.peek()):
-                segment = self._read_whitespace(self.look_ahead)
+        while look_ahead.peek(None) is not None:
+            if look_ahead.peek().type in self.whitespace:
+                segment = self._read_whitespace(look_ahead)
             else:
-                segment = self._read_paragraph(self.look_ahead)
+                segment = self._read_paragraph(look_ahead)
                 
-            segments.append(segment)
-
-        return segments
+            yield segment
+    '''
     
     def _read_whitespace(self, look_ahead):
-        #print("Reading whitespace.")
         
-        whitespace_tokens = []
+        whitespace = Segment([next(look_ahead)])
         
-        while not look_ahead.empty() and \
-              self.whitespace.match(self.look_ahead.peek()):
-            whitespace_tokens.append(Token(look_ahead.i, look_ahead.pop()))
+        while look_ahead.peek(None) is not None and \
+              look_ahead.peek().type in self.whitespace:
+            whitespace.append(next(look_ahead))
             
         
-        return Whitespace(whitespace_tokens)
+        return whitespace
     
     def _read_sentence(self, look_ahead):
-        #print("Reading sentence.")
         
-        sentence_tokens = []
+        sentence = MatchableSegment([next(look_ahead)])
         
-        while not look_ahead.empty() and \
-              not self.paragraph_split.match(look_ahead.peek()):
+        while look_ahead.peek(None) is not None and \
+              look_ahead.peek() not in self.paragraph_end:
             
-            i, sentence_bit = look_ahead.i, look_ahead.pop()
-            sentence_tokens.append(Token(i, sentence_bit))
+            sentence_bit = next(look_ahead)
+            sentence.append(sentence_bit)
             
-            if self.sentence_end.match(sentence_bit) and \
-               len(sentence_tokens) >= self.min_sentence:
-                break
+            if sentence_bit.type in self.sentence_end:
+                non_whitespace = sum(s.type not in self.whitespace for s in sentence)
+                if non_whitespace >= self.min_sentence:
+                    break
             
-        return Sentence(sentence_tokens)
+        return sentence
     
     def _read_paragraph(self, look_ahead):
-        #print("Reading paragraph.")
         
-        segments = []
+        paragraph = MatchableSegment()
         
-        while not look_ahead.empty() and \
-              not self.paragraph_split.match(look_ahead.peek()):
+        while look_ahead.peek(None) is not None and \
+              look_ahead.peek().type not in self.paragraph_end:
             
-            if self.whitespace.match(look_ahead.peek()):
+            if look_ahead.peek().type in self.whitespace:
                 segment = self._read_whitespace(look_ahead)
             else:
                 segment = self._read_sentence(look_ahead)
                 
-            segments.append(segment)
+            paragraph.append(segment)
         
-        return Paragraph(segments)
+        return paragraph
     
     @classmethod
     def from_config(cls, doc, name):
+        subsection = doc['segmenters'][name]
         return cls(
-            whitespace=doc['segmenters'][name].get('whitespace'),
-            paragraph_split=doc['segmenters'][name].get('paragraph_split'),
-            sentence_end=doc['segmenters'][name].get('sentence_end'),
-            min_sentence=doc['segmenters'][name].get('min_sentence')
+            whitespace=subsection.get('whitespace'),
+            paragraph_end=subsection.get('paragraph_end'),
+            sentence_end=subsection.get('sentence_end'),
+            min_sentence=subsection.get('min_sentence')
         )
