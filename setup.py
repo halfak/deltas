@@ -1,5 +1,6 @@
 import os
 
+import deltas
 from setuptools import find_packages, setup
 
 
@@ -12,7 +13,7 @@ def requirements(fname):
 
 setup(
     name = "deltas",
-    version = read('VERSION').strip(),
+    version = deltas.__version__,
     author = "Aaron Halfaker",
     author_email = "ahalfaker@wikimedia.org",
     description = "An experimental diff library for generating " + \
