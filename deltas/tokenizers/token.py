@@ -1,4 +1,10 @@
+"""
+Tokens represent chuncks of text that have semantic meaning.  A Token class that
+extends :class:`str` is profivided.
 
+.. autoclass:: deltas.tokenizers.Token
+    :members:
+"""
 
 class Token(str):
     

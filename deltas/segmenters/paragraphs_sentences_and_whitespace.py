@@ -1,13 +1,3 @@
-"""
-Provides a segmenter for splitting text tokens into whitespace
-:class:`~deltas.segmenters.Segment` and paragraphs
-:class:`~deltas.segmenters.MatchableSegment` which contain sentence
-:class:`~deltas.segmenters.MatchableSegment` and whitespace
-:class:`~deltas.segmenters.Segment`.
-
-.. autoclass:: deltas.segmenters.ParagraphsSentencesAndWhitespace
-    :members:
-"""
 import re
 
 from more_itertools import peekable
@@ -19,13 +9,20 @@ from .segments import MatchableSegment, Segment
 WHITESPACE = set(["whitespace", "break"])
 PARAGRAPH_END = set(["break"])
 SENTENCE_END = set(["period", "epoint", "qmark"])
-MIN_SENTENCE = 5
+MIN_SENTENCE = 3
 
 class ParagraphsSentencesAndWhitespace(Segmenter):
     """
     Constructs a paragraphs, sentences and whitespace segmenter.  This segmenter
     is intended to be used in western languages where sentences and paragraphs
     are meaningful segments of text content.
+    
+    Tree structure:
+    
+    * whitespace :class:`~deltas.segmenters.Segment`
+    * paragraph :class:`~deltas.segmenters.MatchableSegment` which contains
+     * sentence :class:`~deltas.segmenters.MatchableSegment`
+     * whitespace :class:`~deltas.segmenters.Segment`
     
     :Parameters:
         whitespace : `set`(`str`)
@@ -96,11 +93,11 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         return segments
     
     @classmethod
-    def from_config(cls, doc, name):
-        subsection = doc['segmenters'][name]
+    def from_config(cls, config, name, section_key="segmenters"):
+        section = config[section_key][name]
         return cls(
-            whitespace=subsection.get('whitespace'),
-            paragraph_end=subsection.get('paragraph_end'),
-            sentence_end=subsection.get('sentence_end'),
-            min_sentence=subsection.get('min_sentence')
+            whitespace=section.get('whitespace'),
+            paragraph_end=section.get('paragraph_end'),
+            sentence_end=section.get('sentence_end'),
+            min_sentence=section.get('min_sentence')
         )

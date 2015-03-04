@@ -7,7 +7,7 @@ to content moves.  This module supports the use of a custom
 :class:`~deltas.segmenters.Segmenter`.
 
 :Example:
-    >>> from deltas import segment_matcher, apply
+    >>> from deltas import segment_matcher
     >>>
     >>> a_tokens = ["This", " ", "comes", " ", "first", ".",
     ...             " ",
@@ -57,9 +57,9 @@ class SegmentMatcher(Detector):
         return diff(a, b, segmenter=self.segmenter)
     
     @classmethod
-    def from_config(cls, doc, name):
-        section = doc['detectors'][name]
-        segmenter = Segmenter.from_config(doc,
+    def from_config(cls, config, name, section_key="detectors"):
+        section = config[section_key][name]
+        segmenter = Segmenter.from_config(config,
                                           section['segmenter'])
         
         return cls(segmenter=segmenter)

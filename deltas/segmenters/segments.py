@@ -26,9 +26,10 @@ from ..util import LookAhead
 
 
 class Segment(list):
-    
     """
-    Represents a sequence of text.
+    Represents a sequence of of tokens.  Note that plain Segments are not
+    matchable.  For matchable segments, see
+    :class:`deltas.segmenters.MatchableSegment`.
     """
     def __new__(cls, *args, **kwargs):
         if len(args) == 1 and len(kwargs) == 0 and isinstance(args[0], cls):
@@ -47,12 +48,17 @@ class Segment(list):
     @property
     def start(self):
         """
-        The token index at which
+        The :func:`deltas.tokenizers.Token.start` of the first
+        :class:`deltas.tokenizers.Token` in the segment.
         """
         return self[0].start
     
     @property
     def end(self):
+        """
+        The :func:`deltas.tokenizers.Token.end` of the last
+        :class:`deltas.tokenizers.Token` in the segment.
+        """
         return self[-1].end
     
     def __repr__(self):
