@@ -59,7 +59,7 @@ def segment_common():
         segments = list(segmenter.segment(common1_tokens))
     print("\tcommon: {0}".format((time.time() - start)/25))
 segment_common()
-profile.run('segment_common()', sort="cumulative")
+#profile.run('segment_common()', sort="cumulative")
 
 print("Running segment matcher:")
 def segment_common():

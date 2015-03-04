@@ -9,5 +9,8 @@ Tokenizers -- tokenize text
 .. autoclass:: deltas.tokenizers.Tokenizer
     :members:
 
-.. autoclass:: deltas.tokenizers.TextSplit
+.. automodule:: deltas.tokenizers.text_split
+    :members:
+
+.. automodule:: deltas.tokenizers.wikitext_split
     :members:

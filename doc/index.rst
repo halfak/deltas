@@ -46,7 +46,7 @@ strategies more easily available.  There are currently two strategies available:
 
 Detect differences
 ------------------
-.. automodule:: deltas.detection
+.. automodule:: deltas.detectors
 
 Operations
 ----------

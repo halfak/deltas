@@ -1,15 +1,12 @@
 """
-Provides a segmenter for splitting text tokens into
-:class:`~deltas.segmenters.paragraphs_sentences_and_whitespace.Paragraph`,
-:class:`~deltas.segmenters.paragraphs_sentences_and_whitespace.Sentence`, and
-:class:`~deltas.segmenters.paragraphs_sentences_and_whitespace.Whitespace`.
-
+Provides a segmenter for splitting text tokens into whitespace
+:class:`~deltas.segmenters.Segment` and paragraphs
+:class:`~deltas.segmenters.MatchableSegment` which contain sentence
+:class:`~deltas.segmenters.MatchableSegment` and whitespace
+:class:`~deltas.segmenters.Segment`.
 
 .. autoclass:: deltas.segmenters.ParagraphsSentencesAndWhitespace
     :members:
-.. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Paragraph
-.. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Sentence
-.. autoclass:: deltas.segmenters.paragraphs_sentences_and_whitespace.Whitespace
 """
 import re
 
@@ -25,6 +22,22 @@ SENTENCE_END = set(["period", "epoint", "qmark"])
 MIN_SENTENCE = 5
 
 class ParagraphsSentencesAndWhitespace(Segmenter):
+    """
+    Constructs a paragraphs, sentences and whitespace segmenter.  This segmenter
+    is intended to be used in western languages where sentences and paragraphs
+    are meaningful segments of text content.
+    
+    :Parameters:
+        whitespace : `set`(`str`)
+            A set of token types that represent whitespace.
+        paragraph_end : `set`(`str`)
+            A set of token types that represent the end of a pragraph.
+        sentence_end : `set`(`str`)
+            A set of tokens types that represent the end of a sentence.
+        min_sentence : int
+            The minimum non-whitespace tokens that a sentence must contain
+            before a sentence_end will be entertained.
+    """
     def __init__(self, *, whitespace=None,
                           paragraph_end=None,
                           sentence_end=None,
@@ -36,7 +49,12 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         self.min_sentence = int(min_sentence or MIN_SENTENCE)
     
     def segment(self, tokens):
+        """
+        Segments a sequence of tokens into a sequence of segments.
         
+        :Parameters:
+            tokens : `list`(`deltas.tokenizers.Token`)
+        """
         look_ahead = LookAhead(tokens)
 
         segments = []
@@ -76,73 +94,6 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
             
         
         return segments
-    
-    '''
-    def segment(self, tokens):
-        """
-        Clusters a sequence of tokens into a list of segments.
-        
-        :Parameters:
-            tokens : `iterable` of `str`
-                A series of tokens to segment.
-        
-        :Returns:
-            A `list` of :class:`Segment`
-        """
-        look_ahead = LookAhead(tokens)
-
-        while look_ahead.peek(None) is not None:
-            if look_ahead.peek().type in self.whitespace:
-                segment = self._read_whitespace(look_ahead)
-            else:
-                segment = self._read_paragraph(look_ahead)
-                
-            yield segment
-    '''
-    
-    def _read_whitespace(self, look_ahead):
-        
-        whitespace = Segment([next(look_ahead)])
-        
-        while look_ahead.peek(None) is not None and \
-              look_ahead.peek().type in self.whitespace:
-            whitespace.append(next(look_ahead))
-            
-        
-        return whitespace
-    
-    def _read_sentence(self, look_ahead):
-        
-        sentence = MatchableSegment([next(look_ahead)])
-        
-        while look_ahead.peek(None) is not None and \
-              look_ahead.peek() not in self.paragraph_end:
-            
-            sentence_bit = next(look_ahead)
-            sentence.append(sentence_bit)
-            
-            if sentence_bit.type in self.sentence_end:
-                non_whitespace = sum(s.type not in self.whitespace for s in sentence)
-                if non_whitespace >= self.min_sentence:
-                    break
-            
-        return sentence
-    
-    def _read_paragraph(self, look_ahead):
-        
-        paragraph = MatchableSegment()
-        
-        while look_ahead.peek(None) is not None and \
-              look_ahead.peek().type not in self.paragraph_end:
-            
-            if look_ahead.peek().type in self.whitespace:
-                segment = self._read_whitespace(look_ahead)
-            else:
-                segment = self._read_sentence(look_ahead)
-                
-            paragraph.append(segment)
-        
-        return paragraph
     
     @classmethod
     def from_config(cls, doc, name):

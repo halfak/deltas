@@ -2,10 +2,17 @@ import yamlconf
 
 
 class Segmenter:
-    
+    """
+    Implements a segmentation strategy
+    """
     def __init__(self): pass
     
-    def segment(self, text): raise NotImplementedError()
+    def segment(self, tokens):
+        """
+        Segments a sequence of :class:`~deltas.tokenizers.Token` into a
+        sequence of :class:`~deltas.segmenters.Segment`
+        """
+        raise NotImplementedError()
     
     @classmethod
     def from_config(cls, doc, name):

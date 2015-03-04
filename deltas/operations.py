@@ -44,7 +44,7 @@ class Delete(Operation):
     
     OPNAME = "delete"
     
-    def __new__(cls, a1, a2, b1, b2):
+    def __new__(cls, a1, a2, b1, b2, name=None):
         return Operation.__new__(cls, "delete", a1, a2, b1, b2)
 
 class Insert(Operation):
@@ -64,7 +64,7 @@ class Insert(Operation):
     
     OPNAME = "insert"
     
-    def __new__(cls, a1, a2, b1, b2):
+    def __new__(cls, a1, a2, b1, b2, name=None):
         return Operation.__new__(cls, "insert", a1, a2, b1, b2)
 
 class Equal(Operation):
@@ -84,5 +84,5 @@ class Equal(Operation):
     
     OPNAME = "equal"
     
-    def __new__(cls, a1, a2, b1, b2):
+    def __new__(cls, a1, a2, b1, b2, name=None):
         return Operation.__new__(cls, "equal", a1, a2, b1, b2)
