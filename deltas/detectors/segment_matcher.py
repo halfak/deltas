@@ -5,27 +5,6 @@ Match segments
 Performs a diffs using a tree of matchable segments in order to remain robust
 to content moves.  This module supports the use of a custom
 :class:`~deltas.segmenters.Segmenter`.
-
-:Example:
-    >>> from deltas import segment_matcher
-    >>>
-    >>> a_tokens = ["This", " ", "comes", " ", "first", ".",
-    ...             " ",
-    ...             "This", " ", "comes", " ", "second", "."]
-    >>>
-    >>> b_tokens = ["This", " ", "comes", " ", "second", ".",
-    ...             " ",
-    ...             "This", " ", "comes", " ", "first", "."]
-    >>>
-    >>> operations = segment_matcher.diff(a_tokens, b_tokens)
-    >>>
-    >>> for operation in operations:
-    ...     print(operation)
-    ...
-    Equal(name='equal', a1=7, a2=13, b1=0, b2=6)
-    Insert(name='insert', a1=6, a2=7, b1=6, b2=7)
-    Equal(name='equal', a1=0, a2=6, b1=7, b2=13)
-    Delete(name='delete', a1=6, a2=7, b1=13, b2=13)
 """
 from collections import defaultdict
 
@@ -38,15 +17,107 @@ from .detector import Detector
 
 SEGMENTER = ParagraphsSentencesAndWhitespace()
 
+def diff(a, b, segmenter=None):
+    """
+    Performs a diff comparison between two sequences of tokens (`a` and `b`)
+    using `segmenter` to cluster and match
+    :class:`deltas.segmenters.MatchableSegment`.
+    
+    :Example:
+from deltas.detectors import segment_matcher
+from deltas.tokenizers import text_split
+
+a = text_split.tokenize("This is some text.  This is some other text.")
+b = text_split.tokenize("This is some other text.  This is some text.")
+
+
+for text in revisions:
+...     print("Text: '{0}'".format(text))
+...     tokens = text_split.tokenize(text)
+...     operations = detector.detect(tokens)
+...     print_operations(operations, last_tokens, tokens)
+...     last_tokens = tokens
+    
+    :Parameters:
+        a : `list`(:class:`deltas.tokenizers.Token`)
+            Initial sequence
+        b : `list`(:class:`deltas.tokenizers.Token`)
+            Changed sequence
+        segmenter : :class:`deltas.segmenters.Segmenter`
+            A segmenter to use on the tokens.
+        
+    :Returns:
+        An `iterable` of operations.
+    """
+    a, b = list(a), list(b)
+    segmenter = segmenter or SEGMENTER
+    
+    # Cluster the input tokens
+    a_segments = segmenter.segment(a)
+    b_segments = segmenter.segment(b)
+    
+    return diff_segments(a_segments, b_segments)
+
+def diff_segments(a_segments, b_segments):
+    """
+    Performs a diff comparison between two sequences of
+    :class:`deltas.segmenters.Segment` and
+    :class:`deltas.segmenters.MatchableSegment`.
+    
+    :Parameters:
+        a_segments : `list`(:class:`deltas.segmenters.Segment`)
+            An initial sequence
+        b_segments : `list`(:class:`deltas.segmenters.Segment`)
+            A changed sequence
+    
+    :Returns:
+        An `iterable` of operations.
+    """
+    a_segments, b_segments = list(a_segments), list(b_segments)
+    
+    # Match and re-sequence unmatched tokens
+    a_segment_tokens, b_segment_tokens = _cluster_matching_segments(a_segments,
+                                                                    b_segments)
+    
+    # Perform a simple LCS over unmatched tokens and clusters
+    clustered_ops = sequence_matcher.diff(a_segment_tokens, b_segment_tokens)
+    
+    # Return the expanded (de-clustered) operations
+    return _expand_clustered_ops(clustered_ops,
+                                 a_segment_tokens,
+                                 b_segment_tokens)
+
 class SegmentMatcher(Detector):
     """
     Constructs a segment matcher detector that preserves state and is able
-    to process versions tokens sequentially.  When detecting changes across
+    to process versions of tokens sequentially.  When detecting changes across
     many versions of a document, this detector will provide a nearly 2x speedup.
+    
+    :Example:
+        >>> from deltas.detectors import SegmentMatcher
+        >>> from deltas.tokenizers import text_split
+        >>> a = text_split.tokenize("This is a version.  It has some text.")
+        >>> b = text_split.tokenize("It has some text.  This is the next version.")
+        >>> c = text_split.tokenize("This is a final version.  It has some text.")
+        >>>
+        >>> detector = SegmentMatcher()
+        >>>
+        >>> operations = detector.detect(a)
+        >>> [''.join(a[op.a1:op.a2]) for op in operations if op.name == "insert"]
+        ['This is a version.  It has some text.']
+        >>>
+        >>> operations = detector.detect(b)
+        >>> [''.join(b[op.a1:op.a2]) for op in operations if op.name == "insert"]
+        ['  ', 'the next']
+        >>>
+        >>> operations = detector.detect(c)
+        >>> [''.join(c[op.a1:op.a2]) for op in operations if op.name == "insert"]
+        ['a', 'final', '  ']
+    
     """
     __slots__ = ('segmenter', 'last_tokens', 'last_segments')
     
-    def __init__(self, segmenter, last_tokens=None, last_segments=None):
+    def __init__(self, segmenter=None, last_tokens=None, last_segments=None):
         self.segmenter = segmenter or SEGMENTER
         self.last_tokens = last_tokens or []
         self.last_segments = last_segments or []
@@ -66,46 +137,6 @@ class SegmentMatcher(Detector):
                                           section['segmenter'])
         
         return cls(segmenter=segmenter)
-
-def diff(a, b, segmenter=None):
-    """
-    Performs a longest common substring diff.
-    
-    :Parameters:
-        a : sequence of `comparable`
-            Initial sequence
-        b : sequence of `comparable`
-            Changed sequence
-        segmenter : :class:`~deltas.Segmenter`
-            A segmenter to use on the tokens.
-        
-    :Returns:
-        An `iterable` of operations.
-    """
-    a, b = list(a), list(b)
-    segmenter = segmenter or SEGMENTER
-    
-    # Cluster the input tokens
-    a_segments = segmenter.segment(a)
-    b_segments = segmenter.segment(b)
-    
-    return diff_segments(a_segments, b_segments)
-
-def diff_segments(a_segments, b_segments):
-    
-    a_segments, b_segments = list(a_segments), list(b_segments)
-    
-    # Match and re-sequence unmatched tokens
-    a_segment_tokens, b_segment_tokens = _cluster_matching_segments(a_segments,
-                                                                    b_segments)
-    
-    # Perform a simple LCS over unmatched tokens and clusters
-    clustered_ops = sequence_matcher.diff(a_segment_tokens, b_segment_tokens)
-    
-    # Return the expanded (de-clustered) operations
-    return _expand_clustered_ops(clustered_ops,
-                                 a_segment_tokens,
-                                 b_segment_tokens)
 
 def _cluster_matching_segments(a_segments, b_segments):
     

@@ -95,3 +95,8 @@ class Equal(Operation):
 
     def relevant_tokens(self, a, b):
         return a[self.a1:self.a2]
+
+def print_operations(operations, a, b):
+    for operation in operations:
+        print("{0}: '{1}'".format(operation.name,
+                                ''.join(operation.relevant_tokens(a,b))))
