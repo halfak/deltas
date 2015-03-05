@@ -80,12 +80,12 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                         
                         paragraph.append(sentence)
                         
-                    else:
+                    else: # look_ahead.peek().type in self.whitespace
                         whitespace = Segment([next(look_ahead)])
                         paragraph.append(whitespace)
                 
                 segments.append(paragraph)
-            else:
+            else: # look_ahead.peek().type in self.whitespace
                 whitespace = Segment([next(look_ahead)])
                 segments.append(whitespace)
             

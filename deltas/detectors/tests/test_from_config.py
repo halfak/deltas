@@ -21,7 +21,7 @@ def test_from_config():
     
     segment_matcher = Detector.from_config(doc, "segment_matcher")
     
-    operations = segment_matcher.diff(wikitext_split.tokenize("Foo bar."),
-                                      wikitext_split.tokenize("Foo burp."))
+    operations = segment_matcher.detect(wikitext_split.tokenize("Foo bar."))
+    operations = segment_matcher.detect(wikitext_split.tokenize("Foo burp."))
     
     eq_(len(list(operations)), 4)

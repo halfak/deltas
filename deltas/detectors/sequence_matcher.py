@@ -62,13 +62,17 @@ def parse_opcodes(opcodes):
     
 
 def SequenceMatcher(Detector):
+    __slots__ = ('last_tokens')
     """
     Constructs a fully configured SegmentMatcher detector.
     """
-    def __init__(self): pass
+    def __init__(self, last_tokens=None):
+        self.last_tokens = last_tokens or []
     
-    def diff(a, b):
-        return diff(a, b)
+    def diff(self, tokens):
+        operations = diff(self.last_tokens, tokens)
+        self.last_tokens = tokens
+        return operations
     
     @classmethod
     def from_config(cls, name):

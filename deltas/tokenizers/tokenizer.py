@@ -1,18 +1,19 @@
 import re
+from collections import namedtuple
 
 import yamlconf
 
 from .token import Token
 
 
-class Token(Token):
-    __slots__ = ("i", "start", "end", "type")
-    def __new__(cls, *args, **kwargs):
-        return str.__new__(cls, args[0])
-
 class Tokenizer:
-    
+    """
+    Constructs a tokenizaton strategy.
+    """
     def tokenize(self, text):
+        """
+        Tokenizes a text.
+        """
         raise NotImplementedError()
     
 class RegexTokenizer(Tokenizer):
@@ -25,16 +26,17 @@ class RegexTokenizer(Tokenizer):
                                          for name, pattern in lexicon))
     
     def tokenize(self, text):
+        return [t for t in self._tokenize(text)]
+    
+    def _tokenize(self, text):
+        """
+        Tokenizes a text
         
+        :Returns:
+            A `list` of tokens
+        """
         for i, match in enumerate(self.regex.finditer(text)):
             type = match.lastgroup
             value = match.group(0)
             
-            #yield Token(value, i=i, type=type)
-            #yield (value, i, type)
-            token = Token(value)
-            token.i = i
-            token.start = i
-            token.end = i+1
-            token.type = type
-            yield token
+            yield Token(value, i, type)

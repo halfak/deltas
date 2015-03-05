@@ -49,7 +49,7 @@ def sequence_random():
     for _ in range(25):
         operations = list(sequence_matcher.diff(random1_tokens, random2_tokens))
     print("\trandom: {0}".format((time.time() - start)/25))
-sequence_random()
+#sequence_random()
 #profile.run('sequence_random()', sort="cumulative")
 
 print("Segmenting:")
@@ -69,13 +69,22 @@ def segment_common():
     print("\tcommon: {0}".format((time.time() - start)/25))
 segment_common()
 #profile.run('segment_common()', sort="cumulative")
+def segment_common_fast():
+    start = time.time()
+    sm = segment_matcher.SegmentMatcher(segmenter)
+    for _ in range(25):
+        operations = list(sm.detect(common1_tokens))
+        operations = list(sm.detect(common2_tokens))
+    print("\tcommon: {0}".format((time.time() - start)/50))
+segment_common_fast()
+#profile.run('segment_common()', sort="cumulative")
 
 def segment_random():
     start = time.time()
     for _ in range(25):
         operations = list(segment_matcher.diff(random1_tokens, random2_tokens))
     print("\trandom: {0}".format((time.time() - start)/25))
-segment_random()
+#segment_random()
 #profile.run('segment_random()', sort="cumulative")
 
 common1_segments = segmenter.segment(common1_tokens)
@@ -97,5 +106,5 @@ def segment_random_seg():
     for _ in range(25):
         operations = list(segment_matcher.diff_segments(random1_segments, random2_segments))
     print("\trandom: {0}".format((time.time() - start)/25))
-segment_random_seg()
+#segment_random_seg()
 #profile.run('segment_random()', sort="cumulative")

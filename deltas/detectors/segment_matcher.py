@@ -26,7 +26,6 @@ to content moves.  This module supports the use of a custom
     Insert(name='insert', a1=6, a2=7, b1=6, b2=7)
     Equal(name='equal', a1=0, a2=6, b1=7, b2=13)
     Delete(name='delete', a1=6, a2=7, b1=13, b2=13)
-
 """
 from collections import defaultdict
 
@@ -41,20 +40,24 @@ SEGMENTER = ParagraphsSentencesAndWhitespace()
 
 class SegmentMatcher(Detector):
     """
-    Constructs a fully configured SegmentMatcher detector.
+    Constructs a segment matcher detector that preserves state and is able
+    to process versions tokens sequentially.  When detecting changes across
+    many versions of a document, this detector will provide a nearly 2x speedup.
     """
-    def __init__(self, segmenter=None):
-        segmenter = segmenter or SEGMENTER
+    __slots__ = ('segmenter', 'last_tokens', 'last_segments')
+    
+    def __init__(self, segmenter, last_tokens=None, last_segments=None):
+        self.segmenter = segmenter or SEGMENTER
+        self.last_tokens = last_tokens or []
+        self.last_segments = last_segments or []
+    
+    def detect(self, tokens):
+        segments = self.segmenter.segment(tokens)
+        operations = diff_segments(self.last_segments, segments)
+        self.last_tokens = tokens
+        self.last_segments = segments
         
-        if hasattr(segmenter, "segment"):
-            self.segmenter = segmenter
-        else:
-            raise TypeError("Expected {0}, ".format(Segmenter) +
-                            "but got {0}.".format(segmenter))
-            
-        
-    def diff(self, a, b):
-        return diff(a, b, segmenter=self.segmenter)
+        return operations
     
     @classmethod
     def from_config(cls, config, name, section_key="detectors"):

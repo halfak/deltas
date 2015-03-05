@@ -5,27 +5,21 @@ extends :class:`str` is profivided.
 .. autoclass:: deltas.tokenizers.Token
     :members:
 """
+from jsonable import JSONable
+
 
 class Token(str):
     
     __slots__ = ("type", "i")
     
-    def __new__(cls, *args, **kwargs):
-        if len(args) == 1 and len(kwargs) == 0:
-            if isinstance(args[0], cls):
-                return args[0]
-            else:
-                raise TypeError("Expected {0}, got {1}".format(cls,
-                                                               type(args[0])))
-                
+    def __new__(cls, content, *args, **kwargs):
+        if isinstance(content, cls):
+            return content
         else:
-            inst = super().__new__(cls, args[0])
-            inst.initialize(*args, **kwargs)
-            return inst
+            return super().__new__(cls, content)
     
-    def __init__(self, *args, **kwargs): pass
-    
-    def initialize(self, content, i, type=None):
+    def __init__(self, content, i, type=None):
+        super().__init__()
         self.type = str(type) if type is not None else None
         self.i = int(i)
     
