@@ -2,7 +2,7 @@ from .apply import apply
 from .operations import Operation, Insert, Delete, Equal
 from .detectors import segment_matcher, SegmentMatcher
 from .detectors import sequence_matcher, SequenceMatcher
-from .tokenizers import Tokenizer
-from .segmenters import Segmenter
+from .tokenizers import Tokenizer, RegexTokenizer, text_split, wikitext_split
+from .segmenters import Segmenter, Segment, MatchableSegment
 
 __version__ = "0.2.1"
