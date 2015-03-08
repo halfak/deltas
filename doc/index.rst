@@ -15,9 +15,9 @@ sequences of comparable  tokens.
 This library is intended to be used to make experimental difference detection
 strategies more easily available.
 
-Detect differences
-------------------
-.. automodule:: deltas.detectors
+Algorithms
+----------
+.. automodule:: deltas.algorithms
 
 Operations
 ----------

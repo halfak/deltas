@@ -3,7 +3,7 @@ Text segmentation is the process of dividing written text into meaningful units,
 such as words, sentences, or topics.  This module provides a collection of
 :class:`~deltas.segmenters.Segmenter` that can be used to produce hierarchical
 clusters of tokens (:class:`~deltas.segmenters.Segmenter`) that can be
-understood by :class:`~deltas.detection.segment_matcher`.
+understood by :class:`~deltas.segment_matcher`.
 
 :class:`~deltas.segmenters.Segmenter`
     is an abstract base class that requires the implementation of a
@@ -12,16 +12,16 @@ understood by :class:`~deltas.detection.segment_matcher`.
     :class:`~deltas.segmenters.Segment` and
     :class:`~deltas.segmenters.MatchableSegment`
 
-:class:`~deltas.segmenters.ParagraphsSentencesAndWhitespace`
+:class:`~deltas.ParagraphsSentencesAndWhitespace`
     implements a
-    :func:`~deltas.segmenters.ParagraphsSentencesAndWhitespace.segment`
+    :func:`~deltas.ParagraphsSentencesAndWhitespace.segment`
     function that clusters tokens into segments of paragraph and
     sentence :class:`~deltas.segmenters.MatchableSegment` with whitespace
     :class:`~deltas.segmenters.Segment` inbetween.
 
 :Example:
-    >>> from deltas.segmenters import ParagraphsSentencesAndWhitespace, print_tree
-    >>> from deltas.tokenizers import text_split
+    >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
+    >>> from deltas.segmenters import print_tree
     >>>
     >>> a = text_split.tokenize("This comes first.  This comes second.")
     >>>

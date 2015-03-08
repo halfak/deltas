@@ -2,16 +2,16 @@
 The primary use-case of this library is to detect differences between two
 sequences of tokens.  So far, two such algorithmic strategies are available:
 
-:class:`deltas.sequence_matcher`
-    implementes :func:`~deltas.sequence_matcher.diff` that will
-    compare two sequences of :class:`~deltas.Token` and return
+:class:`~deltas.algorithms.sequence_matcher`
+    implementes :func:`~deltas.algorithms.sequence_matcher.diff` that will
+    compare two sequences of :class:`~deltas.tokenizers.Token` and return
     a set of operations.
-:class:`deltas.segment_matcher`
-    implementes :func:`~deltas.segment_matcher.diff` that
-    uses a :class:`~deltas.segmenters.Segmenter` to detect block moves
+:class:`~deltas.algorithms.segment_matcher`
+    implementes :func:`~deltas.algorithms.segment_matcher.diff` that
+    uses a :class:`deltas.segmenters.Segmenter` to detect block moves
 
 Both of these algorithms are supplimented with an
-:class:`~delta.algorithms.Engine` and `process()` for more efficiently
+:class:`delta.algorithms.Engine` and `process()` for more efficiently
 processing several revisions of the same text
 
 :Example:

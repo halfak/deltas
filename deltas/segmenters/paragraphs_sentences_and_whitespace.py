@@ -17,10 +17,10 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
 
     Tree structure:
 
-    * whitespace :class:`~deltas.segmenters.Segment`
-    * paragraph :class:`~deltas.segmenters.MatchableSegment` which contains
-     * sentence :class:`~deltas.segmenters.MatchableSegment`
-     * whitespace :class:`~deltas.segmenters.Segment`
+    * whitespace : :class:`deltas.segmenters.Segment`
+    * paragraph : :class:`deltas.segmenters.MatchableSegment`
+     * sentence : :class:`deltas.segmenters.MatchableSegment`
+     * whitespace : :class:`deltas.segmenters.Segment`
 
     :Parameters:
         whitespace : `set`(`str`)

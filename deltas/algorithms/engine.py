@@ -1,5 +1,6 @@
 import yamlconf
-
+"""
+"""
 
 class Engine:
     """
@@ -18,14 +19,14 @@ class Engine:
 
     def processor():
         """
-        Configures and returns a new :class:`deltas.Engine.Processor`
+        Configures and returns a new :class:`deltas.algorithms.Engine.Processor`
         """
         raise NotImplementedError()
 
     @classmethod
     def from_config(cls, config, name, section_key="engines"):
         """
-        Constructs a :class:`deltas.engine.Engine` from a configuration
+        Constructs a :class:`deltas.algorithms.Engine` from a configuration
         doc.
         """
         section = config[section_key][name]
