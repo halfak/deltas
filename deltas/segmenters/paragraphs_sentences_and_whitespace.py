@@ -52,7 +52,7 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         """
         look_ahead = LookAhead(tokens)
 
-        segments = []
+        segments = Segment()
 
         while not look_ahead.empty():
 

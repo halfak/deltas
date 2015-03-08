@@ -38,13 +38,23 @@ class Segment(list):
             inst = super().__new__(cls, *args, **kwargs)
             inst.initialize(*args, **kwargs)
             return inst
-    
+
     def __init__(self, *args, **kwargs): pass
-    
+
     def initialize(self, subsegments=None):
         subsegments = subsegments or []
         super().__init__(subsegments)
-    
+
+    def tokens(self):
+        for subsegment_or_token in self:
+            if isinstance(subsegment_or_token, Segment):
+                subsegment = subsegment_or_token
+                for token in subsegment.tokens():
+                    yield token
+            else:
+                token = subsegment_or_token
+                yield token
+
     @property
     def start(self):
         """
@@ -52,7 +62,7 @@ class Segment(list):
         :class:`deltas.tokenizers.Token` in the segment.
         """
         return self[0].start
-    
+
     @property
     def end(self):
         """
@@ -60,31 +70,31 @@ class Segment(list):
         :class:`deltas.tokenizers.Token` in the segment.
         """
         return self[-1].end
-    
+
     def __repr__(self):
         return "{0}({1})".format(self.__class__.__name__, super().__repr__())
-    
+
     def __str__(self):
         return ''.join(str(ss) for ss in self)
-    
+
     def __eq__(self, other):
         raise NotImplementedError()
-    
+
     def __neq__(self, other):
         raise NotImplementedError()
-    
+
     def __hash__(self, other):
         raise NotImplementedError()
 
 
 class MatchableSegment(Segment):
     __slots__ = ("sha1", "match")
-    
+
     def initialize(self, subsegments=None):
         super().initialize(subsegments)
         self.sha1 = hashlib.sha1(bytes(str(self), 'utf-8'))
         self.match = None
-    
+
     def __eq__(self, other):
         try:
             return hash(self) == hash(other)
@@ -96,14 +106,14 @@ class MatchableSegment(Segment):
             return hash(self) != hash(other)
         except AttributeError:
             return False
-    
+
     def __hash__(self):
         return hash(self.sha1.digest())
-    
+
     def append(self, subsegment):
         super().append(subsegment)
         self.sha1.update(bytes(str(subsegment), 'utf-8'))
-    
+
     def extend(self, subsegments):
         for subsegment in subsegments:
             self.append(subsegment)

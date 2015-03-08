@@ -1,7 +1,7 @@
 from .apply import apply
 from .operations import Operation, Insert, Delete, Equal
-from .detectors import segment_matcher, SegmentMatcher
-from .detectors import sequence_matcher, SequenceMatcher
+from .algorithms import segment_matcher, SegmentMatcher
+from .algorithms import sequence_matcher, SequenceMatcher
 from .tokenizers import Tokenizer, RegexTokenizer, text_split, wikitext_split
 from .segmenters import Segmenter, Segment, MatchableSegment
 
