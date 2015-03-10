@@ -5,6 +5,15 @@ Match segments
 Performs a diffs using a tree of matchable segments in order to remain robust
 to content moves.  This module supports the use of a custom
 :class:`~deltas.segmenters.Segmenter`.
+
+.. automethod:: deltas.algorithms.segment_matcher.diff
+
+.. automethod:: deltas.algorithms.segment_matcher.diff_segments
+
+.. automethod:: deltas.algorithms.segment_matcher.process
+
+.. autoclass:: SegmentMatcher
+    :members:
 """
 from collections import defaultdict
 
@@ -13,19 +22,10 @@ from ..operations import Delete, Equal, Insert
 from ..segmenters import (MatchableSegment, ParagraphsSentencesAndWhitespace,
                           Segment, Segmenter)
 from ..tokenizers import text_split, Token, Tokenizer
-from .engine import Engine
+from .diff_engine import DiffEngine
 
 SEGMENTER = ParagraphsSentencesAndWhitespace()
-"""
-The default segmenter.  This segmenter is designed to split western languages
-into paragraphs, sentences and whitespace.
-"""
-
 TOKENIZER = text_split
-"""
-The default tokenizer.  This tokenizer preserves all characters and splits up
-words, numbers, punctuation and whitespace.
-"""
 
 def diff(a, b, segmenter=None):
     """
@@ -100,11 +100,25 @@ def diff_segments(a_segments, b_segments):
 
 
 def process(texts, *args, **kwargs):
+    """
+    Processes a single sequence of texts with a
+    :class:`~diffengine.algoroithms.SegmentMatcher`.
+
+    :Parameters:
+        texts : `iterable`(`str`)
+            sequence of texts
+        args : `tuple`
+            passed to :class:`~diffengine.algoroithms.SegmentMatcher`'s
+            constructor
+        kwaths : `dict`
+            passed to :class:`~diffengine.algoroithms.SegmentMatcher`'s
+            constructor
+    """
     processor = SegmentMatcher.Processor(*args, **kwargs)
     for text in texts:
         yield processor.process(text)
 
-class SegmentMatcher(Engine):
+class SegmentMatcher(DiffEngine):
     """
     Constructs a segment matcher diff engine that preserves segmentation state
     and is able to process changes sequentially.  When detecting changes
@@ -129,7 +143,7 @@ class SegmentMatcher(Engine):
         '' 'Switching' ' it ' '' 'up' ' ' '' 'here' '.' '  ' 'This is a version.'
     """
 
-    class Processor(Engine.Processor):
+    class Processor(DiffEngine.Processor):
         """
         A processor used by the SegmentMatcher difference engine to track the
         history of a single text.
@@ -164,23 +178,30 @@ class SegmentMatcher(Engine):
                     The text to process
 
             :Returns:
-                A tuple of `operations`, `a_tokens`, `b_tokens`
+                    A tuple of `operations`, `a_tokens`, `b_tokens`
             """
             # Tokenize and segment
-            new_tokens = self.tokenizer.tokenize(text)
-            new_segments = self.segmenter.segment(new_tokens)
+            tokens = self.tokenizer.tokenize(text)
+            segments = self.segmenter.segment(tokens)
+
+            return self.process_segments(segments, tokens=tokens)
+
+        def process_segments(self, segments, tokens=None):
+
+            if tokens is None: tokens = segments.tokens()
 
             # Perform diff
-            operations = diff_segments(self.last_segments, new_segments)
+            operations = diff_segments(self.last_segments, segments)
 
             # Update state
             a = self.last_tokens
-            b = new_tokens
-            self.last_tokens = new_tokens
-            self.last_segments = new_segments
+            b = tokens
+            self.last_tokens = tokens
+            self.last_segments = segments
 
             # Return delta
             return operations, a, b
+
 
     def __init__(self, tokenizer=None, segmenter=None):
         self.tokenizer = tokenizer or TOKENIZER
@@ -196,7 +217,7 @@ class SegmentMatcher(Engine):
         return process(texts, self.tokenizer, self.segmenter, *args, **kwargs)
 
     @classmethod
-    def from_config(cls, config, name, section_key="algorithms"):
+    def from_config(cls, config, name, section_key="diff_engines"):
         section = config[section_key][name]
         return cls(
             Tokenizer.from_config(config, section['tokenizer']),

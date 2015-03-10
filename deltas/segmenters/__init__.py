@@ -18,21 +18,6 @@ understood by :class:`~deltas.segment_matcher`.
     function that clusters tokens into segments of paragraph and
     sentence :class:`~deltas.segmenters.MatchableSegment` with whitespace
     :class:`~deltas.segmenters.Segment` inbetween.
-
-:Example:
-    >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
-    >>> from deltas.segmenters import print_tree
-    >>>
-    >>> a = text_split.tokenize("This comes first.  This comes second.")
-    >>>
-    >>> segmenter = ParagraphsSentencesAndWhitespace()
-    >>> segments = segmenter.segment(a)
-    >>>
-    >>> print_tree(segments)
-    MatchableSegment: 'This comes first.  This comes second.'
-    	MatchableSegment: 'This comes first.'
-    	Segment: '  '
-    	MatchableSegment: 'This comes second.'
 """
 
 from .paragraphs_sentences_and_whitespace import ParagraphsSentencesAndWhitespace

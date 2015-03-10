@@ -4,40 +4,16 @@ Match sequences (longest common substring)
 
 Performs a simple *longest-common-substring* diff.  This module implements a
 simple wrapper around :class:`difflib.SequenceMatcher`.
-
-:Example:
-    >>> from deltas import sequence_matcher, apply
-    >>>
-    >>> a_tokens = ["This", " ", "comes", " ", "first", ".",
-    ...             " ",
-    ...             "This", " ", "comes", " ", "second", "."]
-    >>>
-    >>> b_tokens = ["This", " ", "comes", " ", "second", ".",
-    ...             " ",
-    ...             "This", " ", "comes", " ", "first", "."]
-    >>>
-    >>> operations = sequence_matcher.diff(a_tokens, b_tokens)
-    >>>
-    >>> for operation in operations:
-    ...     print(operation)
-    ...
-    Insert(name='insert', a1=0, a2=0, b1=0, b2=7)
-    Equal(name='equal', a1=0, a2=6, b1=7, b2=13)
-    Delete(name='delete', a1=6, a2=13, b1=13, b2=13)
 """
 
 from difflib import SequenceMatcher as SM
 from ..tokenizers import text_split
-from .engine import Engine
+from .diff_engine import DiffEngine
 
 from ..operations import Delete, Equal, Insert
 
 
 TOKENIZER = text_split
-"""
-The default tokenizer.  This tokenizer preserves all characters and splits up
-words, numbers, punctuation and whitespace.
-"""
 
 OP_PARSERS = {
     "replace": lambda a1, a2, b1, b2: [Delete(a1, a2, b1, b1),
@@ -70,7 +46,7 @@ def process(texts, *args, **kwargs):
     for text in texts:
         yield processor.process(text)
 
-class SequenceMatcher(Engine):
+class SequenceMatcher(DiffEngine):
     """
     Constructs a sequence matching diff engine that preserves verion state
     and is able to process changes sequentially.  When detecting changes
@@ -93,7 +69,7 @@ class SequenceMatcher(Engine):
         'Switching it up here.  ' 'This is a version.' ''
     """
 
-    class Processor(Engine.Processor):
+    class Processor(DiffEngine.Processor):
         __slots__ = ('last_tokens')
         """
         A processor used by the SequenceMatcher difference engine to track the
@@ -139,7 +115,7 @@ class SequenceMatcher(Engine):
         return process(texts, self.tokenizer, *args, **kwargs)
 
     @classmethod
-    def from_config(cls, config, name, section_key="algorithms"):
+    def from_config(cls, config, name, section_key="diff_engines"):
         return cls()
 
 def parse_opcodes(opcodes):

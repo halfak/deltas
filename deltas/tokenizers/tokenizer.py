@@ -48,4 +48,9 @@ class RegexTokenizer(Tokenizer):
             type = match.lastgroup
             value = match.group(0)
 
-            yield Token(value, i, type)
+            token = Token(value)
+            token.type = type
+            token.i = i
+            token.start = i
+            token.end = i+1
+            yield token

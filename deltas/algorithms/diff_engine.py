@@ -2,7 +2,7 @@ import yamlconf
 """
 """
 
-class Engine:
+class DiffEngine:
     """
     Constructs a diff engine.
     """
@@ -24,7 +24,7 @@ class Engine:
         raise NotImplementedError()
 
     @classmethod
-    def from_config(cls, config, name, section_key="engines"):
+    def from_config(cls, config, name, section_key="diff_engines"):
         """
         Constructs a :class:`deltas.algorithms.Engine` from a configuration
         doc.

@@ -1,7 +1,7 @@
 from nose.tools import eq_
 
 from ...tokenizers import wikitext_split
-from ..engine import Engine
+from ..diff_engine import DiffEngine
 
 
 def test_from_config():
@@ -25,9 +25,9 @@ def test_from_config():
         }
     }
 
-    segment_matcher = Engine.from_config(doc, "segment_matcher")
+    segment_matcher = DiffEngine.from_config(doc, "segment_matcher")
     text_operations = list(segment_matcher.process(["Foo bar.", "Foo burp."]))
     eq_(len(text_operations), 2)
-    
+
     ops, a, b = text_operations[1]
     eq_(len(list(ops)), 4)

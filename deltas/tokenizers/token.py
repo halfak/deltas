@@ -9,8 +9,9 @@ extends :class:`str` is profivided.
 
 class Token(str):
 
-    __slots__ = ("type", "i")
+    __slots__ = ("type", "i", "start", "end")
 
+'''
     def __new__(cls, content, *args, **kwargs):
         if isinstance(content, cls):
             return content
@@ -39,3 +40,4 @@ class Token(str):
     @property
     def end(self):
         return self.i+1
+'''
