@@ -1,6 +1,5 @@
 import os
 
-import deltas
 from setuptools import find_packages, setup
 
 
