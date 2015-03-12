@@ -17,25 +17,26 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
 
     Tree structure:
 
-    * whitespace : :class:`deltas.segmenters.Segment`
-    * paragraph : :class:`deltas.segmenters.MatchableSegment`
-     * sentence : :class:`deltas.segmenters.MatchableSegment`
-     * whitespace : :class:`deltas.segmenters.Segment`
+    * whitespace : :class:`~deltas.segmenters.Segment`
+    * paragraph : :class:`~deltas.segmenters.MatchableSegment`
 
-     :Example:
-         >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
-         >>> from deltas.segmenters import print_tree
-         >>>
-         >>> a = text_split.tokenize("This comes first.  This comes second.")
-         >>>
-         >>> segmenter = ParagraphsSentencesAndWhitespace()
-         >>> segments = segmenter.segment(a)
-         >>>
-         >>> print_tree(segments)
-         MatchableSegment: 'This comes first.  This comes second.'
-         	MatchableSegment: 'This comes first.'
-         	Segment: '  '
-         	MatchableSegment: 'This comes second.'
+     * sentence : :class:`~deltas.segmenters.MatchableSegment`
+     * whitespace : :class:`~deltas.segmenters.Segment`
+
+    :Example:
+        >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
+        >>> from deltas.segmenters import print_tree
+        >>>
+        >>> a = text_split.tokenize("This comes first.  This comes second.")
+        >>>
+        >>> segmenter = ParagraphsSentencesAndWhitespace()
+        >>> segments = segmenter.segment(a)
+        >>>
+        >>> print_tree(segments)
+        MatchableSegment: 'This comes first.  This comes second.'
+        	MatchableSegment: 'This comes first.'
+        	Segment: '  '
+        	MatchableSegment: 'This comes second.'
 
     :Parameters:
         whitespace : `set`(`str`)

@@ -25,8 +25,12 @@ class Segment(list):
     __slots__ = ("start", )
     """
     Represents a sequence of of tokens.  Note that plain Segments are not
-    matchable.  For matchable segments, see
-    :class:`deltas.segmenters.MatchableSegment`.
+    matchable.  Plain segments are generally reserved for whitespace.  For
+    matchable segments, see :class:`~deltas.segmenters.MatchableSegment`.
+
+    Note that :class:`~deltas.segmenters.Segment` behaves like a list, but it
+    will expect that everything added will be of type
+    :class:`~deltas.segmenters.Segment` or :class:`~deltas.tokenizers.Token`.
     """
     def __new__(cls, *args, **kwargs):
         if len(args) == 1 and len(kwargs) == 0 and isinstance(args[0], cls):
@@ -78,6 +82,11 @@ class Segment(list):
 
 
 class MatchableSegment(Segment):
+    """
+    Constructs a segment that can be matched.  Segments of this type general
+    contain important content that might have been copied between different
+    versions of text.
+    """
     __slots__ = ("sha1", "match")
 
     def initialize(self, *args, **kwargs):

@@ -18,10 +18,13 @@ class Token(str):
             return super().__new__(cls, content)
 
     def tokens(self):
+        """
+        Returns an iterator of *self*.  This method reflects the behavior of
+        :func:`deltas.segmenters.Segment.tokens`
+        """
         yield self
 
     def __init__(self, content, type=None):
-        super().__init__()
         self.type = str(type) if type is not None else None
         """
         An optional value describing the type of token.
