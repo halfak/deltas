@@ -72,13 +72,14 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         while not look_ahead.empty():
 
             if look_ahead.peek().type not in self.whitespace: # Paragraph!
-                paragraph = MatchableSegment()
+                paragraph = MatchableSegment(look_ahead.i)
 
                 while not look_ahead.empty() and \
                       look_ahead.peek().type not in self.paragraph_end:
 
                     if look_ahead.peek().type not in self.whitespace: #Sentence!
-                        sentence = MatchableSegment([next(look_ahead)])
+                        sentence = MatchableSegment(look_ahead.i,
+                                                    [next(look_ahead)])
 
                         while not look_ahead.empty() and \
                               look_ahead.peek().type not in self.paragraph_end:
@@ -94,12 +95,12 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                         paragraph.append(sentence)
 
                     else: # look_ahead.peek().type in self.whitespace
-                        whitespace = Segment([next(look_ahead)])
+                        whitespace = Segment(look_ahead.i, [next(look_ahead)])
                         paragraph.append(whitespace)
 
                 segments.append(paragraph)
             else: # look_ahead.peek().type in self.whitespace
-                whitespace = Segment([next(look_ahead)])
+                whitespace = Segment(look_ahead.i, [next(look_ahead)])
                 segments.append(whitespace)
 
 

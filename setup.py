@@ -1,6 +1,5 @@
 import os
 
-import deltas
 from setuptools import find_packages, setup
 
 
@@ -13,7 +12,7 @@ def requirements(fname):
 
 setup(
     name = "deltas",
-    version = deltas.__version__,
+    version = "0.2.4",
     author = "Aaron Halfaker",
     author_email = "ahalfaker@wikimedia.org",
     description = "An experimental diff library for generating " + \
@@ -23,7 +22,7 @@ setup(
     url = "https://github.com/halfak/Deltas",
     packages=find_packages(),
     long_description = read('README.rst'),
-    install_requires = ['yamlconf'],
+    install_requires = ['yamlconf', 'hat-trie'],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

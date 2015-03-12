@@ -16,6 +16,7 @@ def diff_sequence(process, tokenizer=None):
     tokens = []
     for ops, a, b in token_operations:
         tokens = apply(ops, a, b)
+        print("|".join(str(t) for t in b))
 
 
     eq_(''.join(tokens), revisions[-1])

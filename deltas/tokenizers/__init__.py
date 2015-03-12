@@ -7,7 +7,7 @@ based on a lexicon.
 :class:`~deltas.tokenizers.text_split`
     a :class:`~deltas.tokenizers.RegexTokenizer` that splits text into words,
     punctuation, symbols and whitespace.
-    
+
 :class:`~deltas.tokenizers.wikitext_split`
     a :class:`~deltas.tokenizers.RegexTokenizer` that splits text into words,
     punctuation, symbols and whitespace as well as wikitext markup elements
