@@ -2,7 +2,6 @@ import re
 from collections import namedtuple
 
 import yamlconf
-from hat_trie import Trie
 
 from .token import Token
 
@@ -45,7 +44,7 @@ class RegexTokenizer(Tokenizer):
         :Returns:
             A `list` of tokens
         """
-        tokens = Trie()
+        tokens = {}
 
         for i, match in enumerate(self.regex.finditer(text)):
             value = match.group(0)

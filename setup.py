@@ -22,7 +22,7 @@ setup(
     url = "https://github.com/halfak/Deltas",
     packages=find_packages(),
     long_description = read('README.rst'),
-    install_requires = ['yamlconf', 'hat-trie'],
+    install_requires = ['yamlconf'],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
