@@ -21,6 +21,7 @@ def test_matchable_segment():
     d[ms] = ms
 
     ms2 = MatchableSegment(0, [Token(c, i) for i, c in enumerate(words)])
+    ms2 = MatchableSegment([Token.construct(c, i) for i, c in enumerate(words)])
     assert ms2 in d
 
 def test_segment():
@@ -43,7 +44,7 @@ def test_equality():
         MatchableSegment(4, [
             MatchableSegment(4, [Token("zero"), Token("one")]),
             MatchableSegment(6, [Token("two"), Token("three")])
-        ]),
+        ])
     )
 
 def test_pickling():
