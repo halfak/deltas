@@ -1,6 +1,7 @@
 import cProfile as profile
 import random
 import time
+import pickle
 
 from deltas import segment_matcher, sequence_matcher
 from deltas.segmenters import ParagraphsSentencesAndWhitespace
@@ -33,6 +34,20 @@ def tokenize_common():
         tokens = list(tokenizer.tokenize(common1))
     print("\tcommon: {0}".format((time.time() - start)/25))
 tokenize_common()
+#profile.run('segment_common()', sort="cumulative")
+
+print("Pickling segments:")
+def segments_pickle():
+    segments = segmenter.segment(common1_tokens)
+    pickled_segments = pickle.dumps(segments)
+    start = time.time()
+    for _ in range(25):
+        pickled_segments = pickle.dumps(segments)
+    print("\tpickling: {0}".format((time.time() - start)/25))
+    for _ in range(25):
+        unpickled_segments = pickle.loads(pickled_segments)
+    print("\tunpickling: {0}".format((time.time() - start)/25))
+segments_pickle()
 #profile.run('segment_common()', sort="cumulative")
 
 print("Running sequence matcher (LCS):")
@@ -76,7 +91,7 @@ def segment_common_fast():
     for _ in range(25):
         operations = list(processor.process(common1))
         operations = list(processor.process(common2))
-    print("\tcommon: {0}".format((time.time() - start)/50))
+    print("\tcommon_fast: {0}".format((time.time() - start)/50))
 segment_common_fast()
 #profile.run('segment_common()', sort="cumulative")
 

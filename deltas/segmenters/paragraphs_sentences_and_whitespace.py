@@ -17,25 +17,26 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
 
     Tree structure:
 
-    * whitespace : :class:`deltas.segmenters.Segment`
-    * paragraph : :class:`deltas.segmenters.MatchableSegment`
-     * sentence : :class:`deltas.segmenters.MatchableSegment`
-     * whitespace : :class:`deltas.segmenters.Segment`
+    * whitespace : :class:`~deltas.segmenters.Segment`
+    * paragraph : :class:`~deltas.segmenters.MatchableSegment`
 
-     :Example:
-         >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
-         >>> from deltas.segmenters import print_tree
-         >>>
-         >>> a = text_split.tokenize("This comes first.  This comes second.")
-         >>>
-         >>> segmenter = ParagraphsSentencesAndWhitespace()
-         >>> segments = segmenter.segment(a)
-         >>>
-         >>> print_tree(segments)
-         MatchableSegment: 'This comes first.  This comes second.'
-         	MatchableSegment: 'This comes first.'
-         	Segment: '  '
-         	MatchableSegment: 'This comes second.'
+     * sentence : :class:`~deltas.segmenters.MatchableSegment`
+     * whitespace : :class:`~deltas.segmenters.Segment`
+
+    :Example:
+        >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
+        >>> from deltas.segmenters import print_tree
+        >>>
+        >>> a = text_split.tokenize("This comes first.  This comes second.")
+        >>>
+        >>> segmenter = ParagraphsSentencesAndWhitespace()
+        >>> segments = segmenter.segment(a)
+        >>>
+        >>> print_tree(segments)
+        MatchableSegment: 'This comes first.  This comes second.'
+        	MatchableSegment: 'This comes first.'
+        	Segment: '  '
+        	MatchableSegment: 'This comes second.'
 
     :Parameters:
         whitespace : `set`(`str`)
@@ -72,13 +73,14 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         while not look_ahead.empty():
 
             if look_ahead.peek().type not in self.whitespace: # Paragraph!
-                paragraph = MatchableSegment()
+                paragraph = MatchableSegment(look_ahead.i)
 
                 while not look_ahead.empty() and \
                       look_ahead.peek().type not in self.paragraph_end:
 
                     if look_ahead.peek().type not in self.whitespace: #Sentence!
-                        sentence = MatchableSegment([next(look_ahead)])
+                        sentence = MatchableSegment(look_ahead.i,
+                                                    [next(look_ahead)])
 
                         while not look_ahead.empty() and \
                               look_ahead.peek().type not in self.paragraph_end:
@@ -94,12 +96,12 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                         paragraph.append(sentence)
 
                     else: # look_ahead.peek().type in self.whitespace
-                        whitespace = Segment([next(look_ahead)])
+                        whitespace = Segment(look_ahead.i, [next(look_ahead)])
                         paragraph.append(whitespace)
 
                 segments.append(paragraph)
             else: # look_ahead.peek().type in self.whitespace
-                whitespace = Segment([next(look_ahead)])
+                whitespace = Segment(look_ahead.i, [next(look_ahead)])
                 segments.append(whitespace)
 
 

@@ -83,8 +83,6 @@ def diff_segments(a_segments, b_segments):
     :Returns:
         An `iterable` of operations.
     """
-    a_segments, b_segments = list(a_segments), list(b_segments)
-
     # Match and re-sequence unmatched tokens
     a_segment_tokens, b_segment_tokens = _cluster_matching_segments(a_segments,
                                                                     b_segments)
@@ -93,9 +91,9 @@ def diff_segments(a_segments, b_segments):
     clustered_ops = sequence_matcher.diff(a_segment_tokens, b_segment_tokens)
 
     # Return the expanded (de-clustered) operations
-    return _expand_clustered_ops(clustered_ops,
-                                 a_segment_tokens,
-                                 b_segment_tokens)
+    return (op for op in SegmentOperationsExpander(clustered_ops,
+                                                   a_segment_tokens,
+                                                   b_segment_tokens).expand())
 
 
 
@@ -237,33 +235,6 @@ def _cluster_matching_segments(a_segments, b_segments):
 
     return a_segment_tokens, b_segment_tokens
 
-def _expand_clustered_ops(operations, a_token_clusters, b_token_clusters):
-
-    position = 0
-    for operation in operations:
-        if isinstance(operation, Equal):
-            #print("Processing equal:")
-            new_ops = _process_equal(position, operation,
-                                     a_token_clusters, b_token_clusters)
-
-        elif isinstance(operation, Insert):
-            #print("Processing insert:")
-            new_ops = _process_insert(position, operation,
-                                      a_token_clusters, b_token_clusters)
-
-        elif isinstance(operation, Delete):
-            #print("Processing remove:")
-            new_ops = _process_delete(position, operation,
-                                      a_token_clusters, b_token_clusters)
-
-        else:
-            assert False, "Should never happen"
-
-        for new_op in new_ops:
-
-            yield new_op
-            position = position + (new_op.b2 - new_op.b1)
-
 def _build_segment_map(segments):
     d = defaultdict(list)
     for matchable_segment in _get_matchable_segments(segments):
@@ -321,65 +292,93 @@ def _expand_unmatched_segments(a_segments):
         else:
             yield subsegment # Dump token
 
-def _process_equal(position, operation, a_token_clusters, b_token_clusters):
-    yield Equal(a_token_clusters[operation.a1].start,
-                a_token_clusters[operation.a2-1].end,
-                b_token_clusters[operation.b1].start,
-                b_token_clusters[operation.b2-1].end)
+class SegmentOperationsExpander:
 
-def _process_insert(position, operation, a_token_clusters, b_token_clusters):
-    inserted_tokens = []
-    for token_or_segment in b_token_clusters[operation.b1:operation.b2]:
+    def __init__(self, operations, a_token_segments, b_token_segments):
 
-        if isinstance(token_or_segment, Token):
-            inserted_tokens.append(token_or_segment)
-        else: # Found a matched token.
-            if len(inserted_tokens) > 0:
-                yield Insert(inserted_tokens[0].start,
-                             inserted_tokens[-1].end,
-                             position,
-                             position+len(inserted_tokens))
+        self.a_pos = 0
+        self.b_pos = 0
+        self.a_token_segments = a_token_segments
+        self.b_token_segments = b_token_segments
+        self.operations = operations
+
+    def expand(self):
+        for operation in self.operations:
+            if isinstance(operation, Equal):
+                #print("Processing equal: {0} {1}".format(self.a_pos, self.b_pos))
+                expanded_operations = self._process_equal(operation)
+            elif isinstance(operation, Insert):
+                #print("Processing insert: {0} {1}".format(self.a_pos, self.b_pos))
+                expanded_operations = self._process_insert(operation)
+            elif isinstance(operation, Delete):
+                #print("Processing remove: {0} {1}".format(self.a_pos, self.b_pos))
+                expanded_operations = self._process_delete(operation)
+            else:
+                assert False, "Should never happen"
+
+            for operation in expanded_operations: yield operation
+
+
+    def _process_equal(self, op):
+        a1 = self.a_pos
+        b1 = self.b_pos
+        token_len = sum(1 for t_s in self.a_token_segments[op.a1:op.a2]
+                          for _ in t_s.tokens())
+        self.a_pos += token_len
+        self.b_pos += token_len
+
+        yield Equal(a1, self.a_pos, b1, self.b_pos)
+
+    def _process_insert(self, op):
+        inserted_token_count = 0
+        for t_s in self.b_token_segments[op.b1:op.b2]:
+            if isinstance(t_s, Token):
+                inserted_token_count += 1
+            else: # Found a matched segment
+                segment = t_s
+
+                # First, emit an insert for the tokens we have seen so far
+                if inserted_token_count > 0:
+                    b1 = self.b_pos
+                    self.b_pos += inserted_token_count
+                    yield Insert(self.a_pos, self.a_pos, b1, self.b_pos)
+                    inserted_token_count = 0
+
+                # Now, emit an Equal for the matched segment
+                b1 = self.b_pos
+                self.b_pos += len(segment)
+                yield Equal(segment.match.start, segment.match.end,
+                            b1, self.b_pos)
+
+
+
+        # Cleanup!  Make sure we emit any remaining inserted tokens.
+        if inserted_token_count > 0:
+            b1 = self.b_pos
+            self.b_pos += inserted_token_count
+            yield Insert(self.a_pos, self.a_pos, b1, self.b_pos)
+            inserted_token_count = 0
+
+    def _process_delete(self, op):
+        removed_token_count = 0
+        for t_s in self.a_token_segments[op.a1:op.a2]:
+
+            if isinstance(t_s, Token):
+                removed_token_count += 1
+            else: # Found a matched token... not removed -- just moved
+                segment = t_s
+
+                if removed_token_count > 0:
+                    a1 = self.a_pos
+                    self.a_pos += removed_token_count
+                    yield Delete(a1, self.a_pos, self.b_pos, self.b_pos)
+                    removed_token_count = 0
 
                 # update & reset!
-                position += len(inserted_tokens)
-                inserted_tokens = []
+                self.a_pos += len(segment)
 
-            match = token_or_segment.match
-            yield Equal(match.start, match.end,
-                        position, position+(match.end-match.start))
-
-            # update!
-            position += match.end-match.start
-
-
-
-    # cleanup
-    if len(inserted_tokens) > 0:
-        yield Insert(inserted_tokens[0].start,
-                     inserted_tokens[-1].end,
-                     position,
-                     position+len(inserted_tokens))
-
-def _process_delete(position, operation, a_token_clusters, b_token_clusters):
-    removed_tokens = []
-    for token_or_segment in a_token_clusters[operation.a1:operation.a2]:
-
-        if isinstance(token_or_segment, Token):
-            removed_tokens.append(token_or_segment)
-        else: # Found a matched token... not removed -- just moved
-            if len(removed_tokens) > 0:
-                yield Delete(removed_tokens[0].start,
-                             removed_tokens[-1].end,
-                             position,
-                             position)
-
-            # update & reset!
-            position += len(removed_tokens)
-            removed_tokens = []
-
-    # cleanup
-    if len(removed_tokens) > 0:
-        yield Delete(removed_tokens[0].start,
-                     removed_tokens[-1].end,
-                     position,
-                     position)
+        # cleanup
+        if removed_token_count > 0:
+            a1 = self.a_pos
+            self.a_pos += removed_token_count
+            yield Delete(a1, self.a_pos, self.b_pos, self.b_pos)

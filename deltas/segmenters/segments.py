@@ -20,16 +20,17 @@ Segment Types
     :members:
 """
 import hashlib
-import types
-
-from ..util import LookAhead
-
 
 class Segment(list):
+    __slots__ = ("start", )
     """
     Represents a sequence of of tokens.  Note that plain Segments are not
-    matchable.  For matchable segments, see
-    :class:`deltas.segmenters.MatchableSegment`.
+    matchable.  Plain segments are generally reserved for whitespace.  For
+    matchable segments, see :class:`~deltas.segmenters.MatchableSegment`.
+
+    Note that :class:`~deltas.segmenters.Segment` behaves like a list, but it
+    will expect that everything added will be of type
+    :class:`~deltas.segmenters.Segment` or :class:`~deltas.tokenizers.Token`.
     """
     def __new__(cls, *args, **kwargs):
         if len(args) == 1 and len(kwargs) == 0 and isinstance(args[0], cls):
@@ -41,9 +42,10 @@ class Segment(list):
 
     def __init__(self, *args, **kwargs): pass
 
-    def initialize(self, subsegments=None):
+    def initialize(self, start=0, subsegments=None):
         subsegments = subsegments or []
         super().__init__(subsegments)
+        self.start = int(start)
 
     def tokens(self):
         for subsegment_or_token in self:
@@ -56,20 +58,12 @@ class Segment(list):
                 yield token
 
     @property
-    def start(self):
-        """
-        The :func:`deltas.tokenizers.Token.start` of the first
-        :class:`deltas.tokenizers.Token` in the segment.
-        """
-        return self[0].start
-
-    @property
     def end(self):
         """
         The :func:`deltas.tokenizers.Token.end` of the last
         :class:`deltas.tokenizers.Token` in the segment.
         """
-        return self[-1].end
+        return self.start + len(self)
 
     def __repr__(self):
         return "{0}({1})".format(self.__class__.__name__, super().__repr__())
@@ -88,10 +82,15 @@ class Segment(list):
 
 
 class MatchableSegment(Segment):
+    """
+    Constructs a segment that can be matched.  Segments of this type general
+    contain important content that might have been copied between different
+    versions of text.
+    """
     __slots__ = ("sha1", "match")
 
-    def initialize(self, subsegments=None):
-        super().initialize(subsegments)
+    def initialize(self, *args, **kwargs):
+        super().initialize(*args, **kwargs)
         self.sha1 = hashlib.sha1(bytes(str(self), 'utf-8'))
         self.match = None
 
@@ -109,6 +108,9 @@ class MatchableSegment(Segment):
 
     def __hash__(self):
         return hash(self.sha1.digest())
+
+    def __getstate__(self): return (self.start, list(self))
+    def __setstate__(self, args): self.initialize(*args)
 
     def append(self, subsegment):
         super().append(subsegment)

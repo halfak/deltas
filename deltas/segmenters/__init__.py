@@ -12,9 +12,9 @@ understood by :class:`~deltas.segment_matcher`.
     :class:`~deltas.segmenters.Segment` and
     :class:`~deltas.segmenters.MatchableSegment`
 
-:class:`~deltas.ParagraphsSentencesAndWhitespace`
+:class:`~deltas.segmenters.ParagraphsSentencesAndWhitespace`
     implements a
-    :func:`~deltas.ParagraphsSentencesAndWhitespace.segment`
+    :func:`~deltas.segmenters.ParagraphsSentencesAndWhitespace.segment`
     function that clusters tokens into segments of paragraph and
     sentence :class:`~deltas.segmenters.MatchableSegment` with whitespace
     :class:`~deltas.segmenters.Segment` inbetween.

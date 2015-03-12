@@ -44,13 +44,16 @@ class RegexTokenizer(Tokenizer):
         :Returns:
             A `list` of tokens
         """
+        tokens = {}
+
         for i, match in enumerate(self.regex.finditer(text)):
-            type = match.lastgroup
             value = match.group(0)
 
-            token = Token(value)
-            token.type = type
-            token.i = i
-            token.start = i
-            token.end = i+1
+            try:
+                token = tokens[value]
+            except KeyError:
+                type = match.lastgroup
+                token = Token(value, type)
+                tokens[value] = token
+
             yield token
