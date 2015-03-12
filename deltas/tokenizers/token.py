@@ -11,6 +11,15 @@ class Token(str):
 
     __slots__ = ("type", "i", "start", "end")
 
+    @classmethod
+    def construct(cls, content, i, type=None):
+        t = cls(content)
+        t.i = i
+        t.type = type
+        t.start = i
+        t.end = i+1
+        return t
+
 '''
     def __new__(cls, content, *args, **kwargs):
         if isinstance(content, cls):

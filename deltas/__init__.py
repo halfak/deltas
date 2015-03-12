@@ -6,4 +6,4 @@ from .algorithms import sequence_matcher, SequenceMatcher
 from .tokenizers import Tokenizer, RegexTokenizer, text_split, wikitext_split
 from .segmenters import Segmenter, Segment, MatchableSegment
 
-__version__ = "0.2.3"
+__version__ = "0.2.5"
