@@ -27,13 +27,14 @@ def diff_and_replay(diff, tokenizer=None):
     b_tokens = list(text_split.tokenize(b))
     operations = list(diff(a_tokens, b_tokens))
 
+    print("Diff 1:")
     for op in operations:
         if op.name == "equal":
-            print("equal: " + str(a_tokens[op.a1:op.a2]))
+            print("equal: " + repr("".join(a_tokens[op.a1:op.a2])))
         elif op.name == "delete":
-            print("delete: " + str(a_tokens[op.a1:op.a2]))
+            print("delete: " + repr("".join(a_tokens[op.a1:op.a2])))
         elif op.name == "insert":
-            print("insert: " + str(b_tokens[op.b1:op.b2]))
+            print("insert: " + repr("".join(b_tokens[op.b1:op.b2])))
 
     replay_b = [str(t) for t in apply(operations, a_tokens, b_tokens)]
     eq_(b, ''.join(replay_b))
@@ -46,13 +47,46 @@ def diff_and_replay(diff, tokenizer=None):
     b_tokens = list(text_split.tokenize(b))
     operations = list(diff(a_tokens, b_tokens))
 
+    print("\nDiff 2:")
     for op in operations:
         if op.name == "equal":
-            print("equal: " + str(a_tokens[op.a1:op.a2]))
+            print("equal: " + repr("".join(a_tokens[op.a1:op.a2])))
         elif op.name == "delete":
-            print("delete: " + str(a_tokens[op.a1:op.a2]))
+            print("delete: " + repr("".join(a_tokens[op.a1:op.a2])))
         elif op.name == "insert":
-            print("insert: " + str(b_tokens[op.b1:op.b2]))
+            print("insert: " + repr("".join(b_tokens[op.b1:op.b2])))
+
+    replay_b = [str(t) for t in apply(operations, a_tokens, b_tokens)]
+    eq_(b, ''.join(replay_b))
+
+    a = """This is a test paragraph.  It has some sentences.
+
+    I have a lovely bunch of coconuts.
+
+    This is another test paragraph.  It also has some sentences.
+
+    This is a test sentence just floating in space."""
+
+    b = """This is a test paragraph.  It has some sentences.
+
+    This is another test paragraph.  It also has some sentences.
+
+    I have a lovely bunch of coconuts.
+
+    This is a test sentence just floating in space."""
+
+    a_tokens = list(text_split.tokenize(a))
+    b_tokens = list(text_split.tokenize(b))
+    operations = list(diff(a_tokens, b_tokens))
+
+    print("\nDiff 3:")
+    for op in operations:
+        if op.name == "equal":
+            print("equal: " + repr("".join(a_tokens[op.a1:op.a2])))
+        elif op.name == "delete":
+            print("delete: " + repr("".join(a_tokens[op.a1:op.a2])))
+        elif op.name == "insert":
+            print("insert: " + repr("".join(b_tokens[op.b1:op.b2])))
 
     replay_b = [str(t) for t in apply(operations, a_tokens, b_tokens)]
     eq_(b, ''.join(replay_b))

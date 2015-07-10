@@ -21,7 +21,7 @@ from . import sequence_matcher
 from ..operations import Delete, Equal, Insert
 from ..segmenters import (MatchableSegment, ParagraphsSentencesAndWhitespace,
                           Segment, Segmenter)
-from ..tokenizers import text_split, Token, Tokenizer
+from ..tokenizers import Token, Tokenizer, text_split
 from .diff_engine import DiffEngine
 
 SEGMENTER = ParagraphsSentencesAndWhitespace()
@@ -106,10 +106,10 @@ def process(texts, *args, **kwargs):
         texts : `iterable`(`str`)
             sequence of texts
         args : `tuple`
-            passed to :class:`~diffengine.algoroithms.SegmentMatcher`'s
+            passed to :class:`~diffengine.algorithms.SegmentMatcher`'s
             constructor
         kwaths : `dict`
-            passed to :class:`~diffengine.algoroithms.SegmentMatcher`'s
+            passed to :class:`~diffengine.algorithms.SegmentMatcher`'s
             constructor
     """
     processor = SegmentMatcher.Processor(*args, **kwargs)
@@ -331,6 +331,7 @@ class SegmentOperationsExpander:
 
     def _process_insert(self, op):
         inserted_token_count = 0
+
         for t_s in self.b_token_segments[op.b1:op.b2]:
             if isinstance(t_s, Token):
                 inserted_token_count += 1
@@ -346,7 +347,7 @@ class SegmentOperationsExpander:
 
                 # Now, emit an Equal for the matched segment
                 b1 = self.b_pos
-                self.b_pos += len(segment)
+                self.b_pos += sum(1 for _ in segment.tokens())
                 yield Equal(segment.match.start, segment.match.end,
                             b1, self.b_pos)
 
@@ -375,7 +376,7 @@ class SegmentOperationsExpander:
                     removed_token_count = 0
 
                 # update & reset!
-                self.a_pos += len(segment)
+                self.a_pos += sum(1 for _ in segment.tokens())
 
         # cleanup
         if removed_token_count > 0:

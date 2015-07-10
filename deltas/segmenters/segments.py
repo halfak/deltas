@@ -21,6 +21,7 @@ Segment Types
 """
 import hashlib
 
+
 class Segment(list):
     __slots__ = ("start", )
     """
@@ -63,7 +64,7 @@ class Segment(list):
         The :func:`deltas.tokenizers.Token.end` of the last
         :class:`deltas.tokenizers.Token` in the segment.
         """
-        return self.start + len(self)
+        return self.start + sum(1 for _ in self.tokens())
 
     def __repr__(self):
         return "{0}({1})".format(self.__class__.__name__, super().__repr__())
