@@ -5,9 +5,9 @@ An open licensed (MIT) library for performing generating deltas (A.K.A sequences
 of operations) representing the difference between two sequences of comparable
 tokens.
 
-* **Installation:** **TODO**
-* **Repo**: `http://github.com/halfak/Deltas`_
-* **Documentation**: `http://pythonhosted.org/deltas/`_
+* **Installation:** ``pip install deltas``
+* **Repo**: http://github.com/halfak/Deltas
+* **Documentation**: http://pythonhosted.org/deltas
 * Note this library requires Python 3.3 or newer
 
 This library is intended to be used to make experimental difference detection
