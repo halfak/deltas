@@ -1,0 +1,13 @@
+Source: python3-deltas
+Maintainer: Aaron Halfakar <aaron.halfakar@gmail.com>
+Section: python
+Priority: optional
+Build-Depends: python3-setuptools, python3-all, debhelper (>= 9), python3-yamlconf
+Standards-Version: 3.9.6
+
+Package: python3-deltas
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}
+Description: An open licensed (MIT) library for performing generating deltas 
+ (A.K.A sequences of operations) representing the difference between two 
+ sequences of comparable tokens.
