@@ -31,21 +31,43 @@ ADDRESS = (
     r'(?::\d{2,5})?' +
     r'(?:[^a-z\u00a1-\uffff0-9][^\s]*)?'
 )
+
 url = (
     r'(' + \
         r'(' + '|'.join(PLAIN_PROTO) + r')\:|' + \
         r'(' + '|'.join(SLASHED_PROTO) + r')\:\/\/' + \
     r')' + ADDRESS
 )
-re.compile(url, re.U).match("https://website.gov?param=value")
+#re.compile(url, re.U).match("https://website.gov?param=value")
 
+# Matches Chinese, Japanese and Korean characters.  Some ranges are commented
+# out because they match ASCII chars.
+cjk = (
+    r'[' +
+        r'\u4E00-\u62FF' +  # Unified Ideographs
+            r'\u6300-\u77FF' +
+            r'\u7800-\u8CFF' +
+            r'\u8D00-\u9FCC' +
+        r'\u3400-\u4DFF' +  # Unified Ideographs Ext A
+        r'\U00020000-\U000215FF' + # Unified Ideographs Ext. B
+            r'\U00021600-\U000230FF' +
+            r'\U00023100-\U000245FF' +
+            r'\U00024600-\U000260FF' +
+            r'\U00026100-\U000275FF' +
+            r'\U00027600-\U000290FF' +
+            r'\U00029100-\U0002A6DF' +
+        r'\uF900-\uFAFF' +  # Compatibility Ideographs
+        r'\U0002F800-\U0002FA1F' +  # Compatibility Ideographs Suppl.
+    r']'
+)
 
 LEXICON = [
     ('comment_start', r'<!--'),
     ('comment_end',   r'-->'),
     ("url",           url),
     ('entity',        r'&[a-z][a-z0-9]*;'),
-    ('word',          r'[^[\W\d]+'),
+    ('cjk',           cjk),
+    ('word',          r'\w*[^\W\d]\w*'),
     ('number',        r'[\d]+'),
     ('tag',           r'<\\?([a-z][a-z0-9]*)\b[^>]*>'),
     ('period',        r'\.+'),
