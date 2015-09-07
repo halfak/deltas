@@ -1,6 +1,5 @@
 import yamlconf
-"""
-"""
+
 
 class DiffEngine:
     """
@@ -13,13 +12,12 @@ class DiffEngine:
         of a single text.
         """
 
-        def process(text):
+        def process(text, token_class=None):
             raise NotImplementedError()
 
-
-    def processor():
+    def processor(self):
         """
-        Configures and returns a new :class:`deltas.algorithms.Engine.Processor`
+        Configures and returns a new :class:`~deltas.DiffEngine.Processor`
         """
         raise NotImplementedError()
 

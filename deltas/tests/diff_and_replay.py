@@ -4,7 +4,7 @@ from ..apply import apply
 from ..tokenizers import text_split
 
 
-def diff_and_replay(diff, tokenizer=None):
+def diff_and_replay(diff):
     a = """
     This sentence is going to get copied. This sentence is going to go away.
 

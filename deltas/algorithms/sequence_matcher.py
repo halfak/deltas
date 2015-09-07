@@ -7,11 +7,10 @@ simple wrapper around :class:`difflib.SequenceMatcher`.
 """
 
 from difflib import SequenceMatcher as SM
-from ..tokenizers import text_split
-from .diff_engine import DiffEngine
 
 from ..operations import Delete, Equal, Insert
-
+from ..tokenizers import Token, text_split
+from .diff_engine import DiffEngine
 
 TOKENIZER = text_split
 
@@ -22,6 +21,7 @@ OP_PARSERS = {
     "delete": lambda a1, a2, b1, b2: [Delete(a1, a2, b1, b2)],
     "equal": lambda a1, a2, b1, b2: [Equal(a1, a2, b1, b2)]
 }
+
 
 def diff(a, b):
     """
@@ -40,11 +40,13 @@ def diff(a, b):
     opcodes = SM(None, a, b).get_opcodes()
     return parse_opcodes(opcodes)
 
+
 def process(texts, *args, **kwargs):
     processor = SequenceMatcher.Processor(*args, **kwargs)
 
     for text in texts:
         yield processor.process(text)
+
 
 class SequenceMatcher(DiffEngine):
     """
@@ -58,13 +60,16 @@ class SequenceMatcher(DiffEngine):
         >>> engine = SequenceMatcher()
         >>>
         >>> processor = engine.processor()
-        >>> ops, a, b = processor.process("This is a version.  It has some text in it.")
+        >>> ops, a, b = processor.process("This is a version.  It has some " +
+        ...                               "text in it.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'This is a version.  It has some text in it.'
-        >>> ops, a, b = processor.process("This is a version.  However, it has different.")
+        >>> ops, a, b = processor.process("This is a version.  However, it " +
+        ...                               "has different.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'This is a version.  ' '' 'However, it' ' has ' '' 'different' '.'
-        >>> ops, a, b = processor.process("Switching it up here.  This is a version.")
+        >>> ops, a, b = processor.process("Switching it up here.  This is " +
+        ...                               "a version.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'Switching it up here.  ' 'This is a version.' ''
     """
@@ -75,17 +80,19 @@ class SequenceMatcher(DiffEngine):
         A processor used by the SequenceMatcher difference engine to track the
         history of a single text.
         """
-        def __init__(self, tokenizer=None, last_text=None, last_tokens=None):
+        def __init__(self, tokenizer=None, last_text=None, last_tokens=None,
+                     token_class=None):
             self.tokenizer = tokenizer or TOKENIZER
             self.update(last_text, last_tokens)
+            self.token_class = token_class
 
-        def update(self, last_text=None, last_tokens=None):
+        def update(self, last_text=None, last_tokens=None, **kwargs):
             if last_text is not None:
-                self.last_tokens = tokenizer.tokenize(last_text)
+                self.last_tokens = self.tokenizer.tokenize(last_text, **kwargs)
             else:
                 self.last_tokens = last_tokens or []
 
-        def process(self, text):
+        def process(self, text, token_class=None):
             """
             Processes a new version of a text and returns the delta.
 
@@ -96,7 +103,8 @@ class SequenceMatcher(DiffEngine):
             :Returns:
                 A tuple of `operations`, `a_tokens`, `b_tokens`
             """
-            tokens = self.tokenizer.tokenize(text)
+            token_class = token_class or self.token_class
+            tokens = self.tokenizer.tokenize(text, token_class=token_class)
             operations = diff(self.last_tokens, tokens)
 
             a = self.last_tokens
@@ -117,6 +125,7 @@ class SequenceMatcher(DiffEngine):
     @classmethod
     def from_config(cls, config, name, section_key="diff_engines"):
         return cls()
+
 
 def parse_opcodes(opcodes):
 

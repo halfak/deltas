@@ -27,6 +27,7 @@ from .diff_engine import DiffEngine
 SEGMENTER = ParagraphsSentencesAndWhitespace()
 TOKENIZER = text_split
 
+
 def diff(a, b, segmenter=None):
     """
     Performs a diff comparison between two sequences of tokens (`a` and `b`)
@@ -68,6 +69,7 @@ def diff(a, b, segmenter=None):
 
     return diff_segments(a_segments, b_segments)
 
+
 def diff_segments(a_segments, b_segments):
     """
     Performs a diff comparison between two pre-clustered
@@ -96,7 +98,6 @@ def diff_segments(a_segments, b_segments):
                                                    b_segment_tokens).expand())
 
 
-
 def process(texts, *args, **kwargs):
     """
     Processes a single sequence of texts with a
@@ -116,6 +117,7 @@ def process(texts, *args, **kwargs):
     for text in texts:
         yield processor.process(text)
 
+
 class SegmentMatcher(DiffEngine):
     """
     Constructs a segment matcher diff engine that preserves segmentation state
@@ -130,13 +132,16 @@ class SegmentMatcher(DiffEngine):
         >>> engine = SegmentMatcher(text_split)
         >>>
         >>> processor = engine.processor()
-        >>> ops, a, b = processor.process("This is a version.  It has some text in it.")
+        >>> ops, a, b = processor.process("This is a version.  It has some " +
+                                          "text in it.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'This is a version.  It has some text in it.'
-        >>> ops, a, b = processor.process("This is a version.  However, it has different.")
+        >>> ops, a, b = processor.process("This is a version.  However, it " +
+                                          "has different.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'This is a version.  ' '' 'However, it' ' has ' '' 'different' '.'
-        >>> ops, a, b = processor.process("Switching it up here.  This is a version.")
+        >>> ops, a, b = processor.process("Switching it up here.  This is a " +
+                                          "version.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         '' 'Switching' ' it ' '' 'up' ' ' '' 'here' '.' '  ' 'This is a version.'
     """
@@ -158,7 +163,7 @@ class SegmentMatcher(DiffEngine):
                 self.last_tokens = self.last_segments.tokens()
             elif last_tokens is not None:
                 self.last_tokens = last_tokens
-                self.last_segments = self.segments.segment(last_tokens)
+                self.last_segments = self.segmenter.segment(last_tokens)
             elif last_text is not None:
                 self.last_tokens = self.tokenizer.tokenize(last_text)
                 self.last_segments = self.segmenter.segment(self.last_tokens)
@@ -166,8 +171,7 @@ class SegmentMatcher(DiffEngine):
                 self.last_tokens = []
                 self.last_segments = Segment()
 
-
-        def process(self, text):
+        def process(self, text, token_class=Token):
             """
             Processes a new version of a text and returns the delta.
 
@@ -179,7 +183,7 @@ class SegmentMatcher(DiffEngine):
                     A tuple of `operations`, `a_tokens`, `b_tokens`
             """
             # Tokenize and segment
-            tokens = self.tokenizer.tokenize(text)
+            tokens = self.tokenizer.tokenize(text, token_class=token_class)
             segments = self.segmenter.segment(tokens)
 
             return self.process_segments(segments, tokens=tokens)

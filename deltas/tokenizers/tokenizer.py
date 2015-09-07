@@ -10,7 +10,7 @@ class Tokenizer:
     """
     Constructs a tokenizaton strategy.
     """
-    def tokenize(self, text):
+    def tokenize(self, text, token_class=Token):
         """
         Tokenizes a text.
         """
@@ -34,16 +34,17 @@ class RegexTokenizer(Tokenizer):
         self.regex = re.compile('|'.join('(?P<{0}>{1})'.format(name, pattern)
                                          for name, pattern in lexicon))
 
-    def tokenize(self, text):
-        return [t for t in self._tokenize(text)]
+    def tokenize(self, text, token_class=None):
+        return [t for t in self._tokenize(text, token_class=token_class)]
 
-    def _tokenize(self, text):
+    def _tokenize(self, text, token_class=None):
         """
         Tokenizes a text
 
         :Returns:
             A `list` of tokens
         """
+        token_class = token_class or Token
         tokens = {}
 
         for i, match in enumerate(self.regex.finditer(text)):
@@ -53,7 +54,7 @@ class RegexTokenizer(Tokenizer):
                 token = tokens[value]
             except KeyError:
                 type = match.lastgroup
-                token = Token(value, type)
+                token = token_class(value, type=type)
                 tokens[value] = token
 
             yield token

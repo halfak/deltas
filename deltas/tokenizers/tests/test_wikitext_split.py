@@ -5,7 +5,6 @@ from ..wikitext_split import wikitext_split
 
 def test_wikitext_split():
 
-
     input = "As a sentence, this includes punctuation. \n" + \
             "\n" + \
             "==Header!==\n" + \
