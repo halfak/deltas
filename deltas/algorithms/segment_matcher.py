@@ -190,9 +190,11 @@ class SegmentMatcher(DiffEngine):
 
         def process_segments(self, segments, tokens=None):
 
-            if tokens is None: tokens = segments.tokens()
+            if tokens is None:
+                tokens = segments.tokens()
 
             # Perform diff
+            _clear_matches(self.last_segments)
             operations = diff_segments(self.last_segments, segments)
 
             # Update state
@@ -217,6 +219,7 @@ class SegmentMatcher(DiffEngine):
 
     def process(self, texts, *args, **kwargs):
         return process(texts, self.tokenizer, self.segmenter, *args, **kwargs)
+
 
     @classmethod
     def from_config(cls, config, name, section_key="diff_engines"):
@@ -268,18 +271,18 @@ def _match_segments(a_segment_map, b_segments):
 
             if isinstance(subsegment, MatchableSegment) and \
                subsegment in a_segment_map:
-                matched_segments = a_segment_map[subsegment] # Get matches
-                for matched_segment in matched_segments: # For each match
-                    matched_segment.match = subsegment # flag as matched
-                subsegment.match = matched_segments[0] # Always associate with first match
-                yield subsegment # Dump matched segment
+                matched_segments = a_segment_map[subsegment]  # Get matches
+                for matched_segment in matched_segments:  # For each match
+                    matched_segment.match = subsegment  # flag as matched
+                subsegment.match = matched_segments[0]  # first match
+                yield subsegment  # Dump matched segment
 
             else:
                 for seg_or_tok in _match_segments(a_segment_map, subsegment):
-                    yield seg_or_tok # Recurse
+                    yield seg_or_tok  # Recurse
 
         else:
-            yield subsegment # Dump token
+            yield subsegment  # Dump token
 
 
 def _expand_unmatched_segments(a_segments):
@@ -295,6 +298,16 @@ def _expand_unmatched_segments(a_segments):
                     yield seg_or_tok # Recurse
         else:
             yield subsegment # Dump token
+
+
+def _clear_matches(segment):
+    if isinstance(segment, MatchableSegment):
+        segment.match = None
+
+    if isinstance(segment, Segment):
+        # Recurse!
+        for subsegment in segment:
+            _clear_matches(subsegment)
 
 class SegmentOperationsExpander:
 
