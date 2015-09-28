@@ -2,10 +2,10 @@
 Segments represent subsequences of tokens that have interesting properties.  All
 segments are based on two abstract types:
 
-:class:`deltas.segmenters.segments.Segment`
+:class:`deltas.Segment`
     A segment of text with a ``start`` and ``end`` index that refers to the
     original sequence of tokens.
-:class:`deltas.segmenters.segments.MatchableSegment`
+:class:`deltas.MatchableSegment`
     A segment of text that can be matched with another segment no matter where
     it appears in a document.  Generally segmnents of this type represent a
     substantial collection of tokens.
@@ -13,10 +13,10 @@ segments are based on two abstract types:
 Segment Types
 ^^^^^^^^^^^^^
 
-.. autoclass:: deltas.segmenters.segments.Segment
+.. autoclass:: deltas.Segment
     :members:
 
-.. autoclass:: deltas.segmenters.segments.MatchableSegment
+.. autoclass:: deltas.MatchableSegment
     :members:
 """
 import hashlib
@@ -27,11 +27,11 @@ class Segment(list):
     """
     Represents a sequence of of tokens.  Note that plain Segments are not
     matchable.  Plain segments are generally reserved for whitespace.  For
-    matchable segments, see :class:`~deltas.segmenters.MatchableSegment`.
+    matchable segments, see :class:`~deltas.MatchableSegment`.
 
-    Note that :class:`~deltas.segmenters.Segment` behaves like a list, but it
+    Note that :class:`~deltas.Segment` behaves like a list, but it
     will expect that everything added will be of type
-    :class:`~deltas.segmenters.Segment` or :class:`~deltas.tokenizers.Token`.
+    :class:`~deltas.Segment` or :class:`~deltas.Token`.
     """
     def __new__(cls, *args, **kwargs):
         if len(args) == 1 and len(kwargs) == 0 and isinstance(args[0], cls):
@@ -61,8 +61,8 @@ class Segment(list):
     @property
     def end(self):
         """
-        The :func:`deltas.tokenizers.Token.end` of the last
-        :class:`deltas.tokenizers.Token` in the segment.
+        The :func:`deltas.Token.end` of the last
+        :class:`deltas.Token` in the segment.
         """
         return self.start + sum(1 for _ in self.tokens())
 

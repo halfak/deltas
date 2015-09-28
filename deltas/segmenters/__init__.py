@@ -1,23 +1,23 @@
 """
 Text segmentation is the process of dividing written text into meaningful units,
 such as words, sentences, or topics.  This module provides a collection of
-:class:`~deltas.segmenters.Segmenter` that can be used to produce hierarchical
-clusters of tokens (:class:`~deltas.segmenters.Segmenter`) that can be
+:class:`~deltas.Segmenter` that can be used to produce hierarchical
+clusters of tokens (:class:`~deltas.Segmenter`) that can be
 understood by :class:`~deltas.segment_matcher`.
 
-:class:`~deltas.segmenters.Segmenter`
+:class:`~deltas.Segmenter`
     is an abstract base class that requires the implementation of a
-    :func:`~deltas.segmenters.Segmenter.segment`
+    :func:`~deltas.Segmenter.segment`
     function that clusters tokens into a sequences of
-    :class:`~deltas.segmenters.Segment` and
-    :class:`~deltas.segmenters.MatchableSegment`
+    :class:`~deltas.Segment` and
+    :class:`~deltas.MatchableSegment`
 
-:class:`~deltas.segmenters.ParagraphsSentencesAndWhitespace`
+:class:`~deltas.ParagraphsSentencesAndWhitespace`
     implements a
-    :func:`~deltas.segmenters.ParagraphsSentencesAndWhitespace.segment`
+    :func:`~deltas.ParagraphsSentencesAndWhitespace.segment`
     function that clusters tokens into segments of paragraph and
-    sentence :class:`~deltas.segmenters.MatchableSegment` with whitespace
-    :class:`~deltas.segmenters.Segment` inbetween.
+    sentence :class:`~deltas.MatchableSegment` with whitespace
+    :class:`~deltas.Segment` inbetween.
 """
 
 from .paragraphs_sentences_and_whitespace import ParagraphsSentencesAndWhitespace

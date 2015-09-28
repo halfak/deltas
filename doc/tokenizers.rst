@@ -12,10 +12,10 @@ Tokenizers -- tokenize text
 .. automodule:: deltas.tokenizers.wikitext_split
     :members:
 
-.. autoclass:: deltas.tokenizers.Tokenizer
+.. autoclass:: deltas.Tokenizer
     :members:
 
-.. autoclass:: deltas.tokenizers.RegexTokenizer
+.. autoclass:: deltas.RegexTokenizer
     :members:
 
 Token

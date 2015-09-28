@@ -9,6 +9,7 @@ PARAGRAPH_END = set(["break"])
 SENTENCE_END = set(["period", "epoint", "qmark"])
 MIN_SENTENCE = 3
 
+
 class ParagraphsSentencesAndWhitespace(Segmenter):
     """
     Constructs a paragraphs, sentences and whitespace segmenter.  This segmenter
@@ -17,11 +18,11 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
 
     Tree structure:
 
-    * whitespace : :class:`~deltas.segmenters.Segment`
-    * paragraph : :class:`~deltas.segmenters.MatchableSegment`
+    * whitespace : :class:`~deltas.Segment`
+    * paragraph : :class:`~deltas.MatchableSegment`
 
-     * sentence : :class:`~deltas.segmenters.MatchableSegment`
-     * whitespace : :class:`~deltas.segmenters.Segment`
+     * sentence : :class:`~deltas.MatchableSegment`
+     * whitespace : :class:`~deltas.Segment`
 
     :Example:
         >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
@@ -34,18 +35,18 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         >>>
         >>> print_tree(segments)
         MatchableSegment: 'This comes first.  This comes second.'
-        	MatchableSegment: 'This comes first.'
-        	Segment: '  '
-        	MatchableSegment: 'This comes second.'
+            MatchableSegment: 'This comes first.'
+            Segment: '  '
+            MatchableSegment: 'This comes second.'
 
     :Parameters:
-        whitespace : `set`(`str`)
+        whitespace : `set` ( `str`)
             A set of token types that represent whitespace.
-        paragraph_end : `set`(`str`)
+        paragraph_end : `set` ( `str`)
             A set of token types that represent the end of a pragraph.
-        sentence_end : `set`(`str`)
+        sentence_end : `set` ( `str`)
             A set of tokens types that represent the end of a sentence.
-        min_sentence : int
+        min_sentence : `int`
             The minimum non-whitespace tokens that a sentence must contain
             before a sentence_end will be entertained.
     """
@@ -64,7 +65,7 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         Segments a sequence of tokens into a sequence of segments.
 
         :Parameters:
-            tokens : `list`(`deltas.tokenizers.Token`)
+            tokens : `list` ( :class:`~deltas.Token` )
         """
         look_ahead = LookAhead(tokens)
 

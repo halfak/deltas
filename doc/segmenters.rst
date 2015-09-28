@@ -5,10 +5,10 @@ Segmenters -- Join tokens into hierarchical clusters
 
 .. automodule:: deltas.segmenters
 
-.. autoclass:: deltas.segmenters.ParagraphsSentencesAndWhitespace
+.. autoclass:: deltas.ParagraphsSentencesAndWhitespace
     :members:
 
-.. autoclass:: deltas.segmenters.Segmenter
+.. autoclass:: deltas.Segmenter
     :members:
     :member-order: bysource
 

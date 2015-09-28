@@ -1,3 +1,9 @@
+"""
+Sequence diff generation
+------------------------
+.. autoclass:: deltas.DiffEngine
+    :members:
+"""
 import yamlconf
 
 
@@ -24,7 +30,7 @@ class DiffEngine:
     @classmethod
     def from_config(cls, config, name, section_key="diff_engines"):
         """
-        Constructs a :class:`deltas.algorithms.Engine` from a configuration
+        Constructs a :class:`deltas.DiffEngine` from a configuration
         doc.
         """
         section = config[section_key][name]

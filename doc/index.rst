@@ -1,13 +1,6 @@
-.. Deltas documentation master file, created by
-   sphinx-quickstart on Fri Jul  4 14:02:59 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Deltas -- Experimental Difference Algorithms
 ============================================
-**Deltas** is an open licensed (MIT) library for performing generating deltas
-(A.K.A sequences of operations) representing the difference between two
-sequences of comparable  tokens.
+This library provides utilities for generating deltas (A.K.A sequences of operations) representing the difference between two sequences of comparable  tokens.
 
 * **Install:** ``pip install deltas``
 * **Contribute:** `http://github.com/halfak/Deltas <http://github.com/halfak/Deltas>`_
@@ -31,6 +24,10 @@ Segmenters
 ----------
 .. automodule:: deltas.segmenters
 
+
+Author
+======
+* Aaron Halfaker -- https://github.com/halfak
 
 Indices and tables
 ==================

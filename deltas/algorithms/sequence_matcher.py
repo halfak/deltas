@@ -4,6 +4,13 @@ Match sequences (longest common substring)
 
 Performs a simple *longest-common-substring* diff.  This module implements a
 simple wrapper around :class:`difflib.SequenceMatcher`.
+
+.. automethod:: deltas.sequence_matcher.diff
+
+.. automethod:: deltas.sequence_matcher.process
+
+.. autoclass:: deltas.SequenceMatcher
+    :members:
 """
 
 from difflib import SequenceMatcher as SM

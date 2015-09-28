@@ -6,13 +6,13 @@ Performs a diffs using a tree of matchable segments in order to remain robust
 to content moves.  This module supports the use of a custom
 :class:`~deltas.segmenters.Segmenter`.
 
-.. automethod:: deltas.algorithms.segment_matcher.diff
+.. automethod:: deltas.segment_matcher.diff
 
-.. automethod:: deltas.algorithms.segment_matcher.diff_segments
+.. automethod:: deltas.segment_matcher.diff_segments
 
-.. automethod:: deltas.algorithms.segment_matcher.process
+.. automethod:: deltas.segment_matcher.process
 
-.. autoclass:: SegmentMatcher
+.. autoclass:: deltas.SegmentMatcher
     :members:
 """
 from collections import defaultdict
@@ -32,7 +32,7 @@ def diff(a, b, segmenter=None):
     """
     Performs a diff comparison between two sequences of tokens (`a` and `b`)
     using `segmenter` to cluster and match
-    :class:`deltas.segmenters.MatchableSegment`.
+    :class:`deltas.MatchableSegment`.
 
     :Example:
         >>> from deltas import segment_matcher, text_split
@@ -73,13 +73,13 @@ def diff(a, b, segmenter=None):
 def diff_segments(a_segments, b_segments):
     """
     Performs a diff comparison between two pre-clustered
-    :class:`deltas.segmenters.Segment` trees.  In most cases, segmentation
+    :class:`deltas.Segment` trees.  In most cases, segmentation
     takes 100X more time than actually performing the diff.
 
     :Parameters:
-        a_segments : :class:`deltas.segmenters.Segment`
+        a_segments : :class:`deltas.Segment`
             An initial sequence
-        b_segments : :class:`deltas.segmenters.Segment`
+        b_segments : :class:`deltas.Segment`
             A changed sequence
 
     :Returns:
@@ -101,16 +101,16 @@ def diff_segments(a_segments, b_segments):
 def process(texts, *args, **kwargs):
     """
     Processes a single sequence of texts with a
-    :class:`~diffengine.algoroithms.SegmentMatcher`.
+    :class:`~diffengine.SegmentMatcher`.
 
     :Parameters:
         texts : `iterable`(`str`)
             sequence of texts
         args : `tuple`
-            passed to :class:`~diffengine.algorithms.SegmentMatcher`'s
+            passed to :class:`~diffengine.SegmentMatcher`'s
             constructor
         kwaths : `dict`
-            passed to :class:`~diffengine.algorithms.SegmentMatcher`'s
+            passed to :class:`~diffengine.SegmentMatcher`'s
             constructor
     """
     processor = SegmentMatcher.Processor(*args, **kwargs)
@@ -126,8 +126,8 @@ class SegmentMatcher(DiffEngine):
     calling :func:`diff` sequentially.
 
     :Example:
-        >>> from deltas.algorithms import SegmentMatcher
-        >>> from deltas.tokenizers import text_split
+        >>> from deltas import SegmentMatcher
+        >>> from deltas import text_split
         >>>
         >>> engine = SegmentMatcher(text_split)
         >>>

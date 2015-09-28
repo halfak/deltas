@@ -2,7 +2,7 @@
 Tokens represent chuncks of text that have semantic meaning.  A Token class that
 extends :class:`str` is provided.
 
-.. autoclass:: deltas.tokenizers.Token
+.. autoclass:: deltas.Token
     :members:
 """
 class Token(str):
@@ -20,7 +20,7 @@ class Token(str):
     def tokens(self):
         """
         Returns an iterator of *self*.  This method reflects the behavior of
-        :func:`deltas.segmenters.Segment.tokens`
+        :func:`deltas.Segment.tokens`
         """
         yield self
 
