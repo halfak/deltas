@@ -4,11 +4,11 @@ Tokenizers are used to split text content into a sequence of tokens.  Extend
 also :class:`~deltas.RegexTokenizer` for producing a tokenizer
 based on a lexicon.
 
-:class:`~deltas.text_split`
+**deltas.text_split**
     a :class:`~deltas.RegexTokenizer` that splits text into words,
     punctuation, symbols and whitespace.
 
-:class:`~deltas.wikitext_split`
+**deltas.wikitext_split**
     a :class:`~deltas.RegexTokenizer` that splits text into words,
     punctuation, symbols and whitespace as well as wikitext markup elements
     (e.g. ('dcurly_open', "{{") and ('bold', "'''"))

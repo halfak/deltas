@@ -15,6 +15,8 @@ Specifically, this library understands and produces three types of operations:
 .. autoclass:: deltas.Delete
 .. autoclass:: deltas.Insert
 .. autoclass:: deltas.Equal
+
+.. autoclass:: deltas.Operation
 """
 from collections import namedtuple
 
@@ -22,7 +24,7 @@ Operation = namedtuple("Operation", ['name', 'a1', 'a2', 'b1', 'b2'])
 """
 Represents an option performed on a sequence of tokens to arrive at another
 sequence of tokens.  Instances of this type are compatible with the output of
-:func:`difflib.SequenceMatcher.get_opcodes`.
+:meth:`difflib.SequenceMatcher.get_opcodes`.
 """
 
 """ This operation is useless and will be ignored

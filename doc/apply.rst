@@ -1,4 +1,5 @@
-.. _deltas.apply:
+Diff application
+================
 
 .. automodule:: deltas.apply
     :members:

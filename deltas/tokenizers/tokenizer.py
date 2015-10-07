@@ -25,6 +25,7 @@ class Tokenizer:
             Tokenizer = yamlconf.import_module(section['class'])
             return Tokenizer.from_config(config, name, section_key)
 
+
 class RegexTokenizer(Tokenizer):
     """
     Uses a lexicon of regular expressions and names to tokenize a text string.

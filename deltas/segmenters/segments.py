@@ -49,6 +49,9 @@ class Segment(list):
         self.start = int(start)
 
     def tokens(self):
+        """
+        `generator` : the tokens in this segment
+        """
         for subsegment_or_token in self:
             if isinstance(subsegment_or_token, Segment):
                 subsegment = subsegment_or_token
@@ -61,8 +64,7 @@ class Segment(list):
     @property
     def end(self):
         """
-        The :func:`deltas.Token.end` of the last
-        :class:`deltas.Token` in the segment.
+        The index of the last :class:`deltas.Token` in the segment.
         """
         return self.start + sum(1 for _ in self.tokens())
 

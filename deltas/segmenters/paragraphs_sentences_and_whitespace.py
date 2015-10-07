@@ -33,11 +33,11 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         >>> segments = segmenter.segment(a)
         >>>
         >>> print_tree(segments)
-    Segment: 'This comes first.  This comes second.'
-    	MatchableSegment: 'This comes first.  This comes second.'
-    		MatchableSegment: 'This comes first.'
-    		Segment: '  '
-    		MatchableSegment: 'This comes second.'
+        Segment: 'This comes first.  This comes second.'
+        	MatchableSegment: 'This comes first.  This comes second.'
+        		MatchableSegment: 'This comes first.'
+        		Segment: '  '
+        		MatchableSegment: 'This comes second.'
 
     :Parameters:
         whitespace : `set` ( `str` )

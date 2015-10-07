@@ -3,7 +3,7 @@ Text segmentation is the process of dividing written text into meaningful units,
 such as words, sentences, or topics.  This module provides a collection of
 :class:`~deltas.Segmenter` that can be used to produce hierarchical
 clusters of tokens (:class:`~deltas.Segmenter`) that can be
-understood by :class:`~deltas.segment_matcher`.
+understood by :class:`~deltas.algorithms.segment_matcher`.
 
 :class:`~deltas.Segmenter`
     is an abstract base class that requires the implementation of a

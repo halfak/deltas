@@ -1,16 +1,11 @@
-.. _deltas.tokenizers:
-
-Tokenizers -- tokenize text
-===========================
+Tokenizers
+==========
 
 .. automodule:: deltas.tokenizers
     :members:
 
-.. automodule:: deltas.tokenizers.text_split
-    :members:
-
-.. automodule:: deltas.tokenizers.wikitext_split
-    :members:
+Classes
+-------
 
 .. autoclass:: deltas.Tokenizer
     :members:

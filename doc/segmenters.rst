@@ -1,7 +1,5 @@
-.. _deltas.segmenters:
-
-Segmenters -- Join tokens into hierarchical clusters
-====================================================
+Segmenters
+==========
 
 .. automodule:: deltas.segmenters
 

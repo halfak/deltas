@@ -5,6 +5,8 @@ extends :class:`str` is provided.
 .. autoclass:: deltas.Token
     :members:
 """
+
+
 class Token(str):
     """
     Constructs a typed sub-string extracted from a text.
@@ -20,7 +22,7 @@ class Token(str):
     def tokens(self):
         """
         Returns an iterator of *self*.  This method reflects the behavior of
-        :func:`deltas.Segment.tokens`
+        :meth:`deltas.Segment.tokens`
         """
         yield self
 

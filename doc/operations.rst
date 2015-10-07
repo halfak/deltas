@@ -1,8 +1,4 @@
-.. _deltas.operations:
-
-Operations -- representing the delta
-====================================
+Operations
+==========
 
 .. automodule:: deltas.operations
-    :members:
-    :member-order: bysource
