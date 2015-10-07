@@ -1,13 +1,13 @@
 """
-Match sequences (longest common substring)
-------------------------------------------
+Sequence Matcher
+----------------
 
 Performs a simple *longest-common-substring* diff.  This module implements a
 simple wrapper around :class:`difflib.SequenceMatcher`.
 
-.. automethod:: deltas.sequence_matcher.diff
+.. autofunction:: deltas.algorithms.sequence_matcher.diff
 
-.. automethod:: deltas.sequence_matcher.process
+.. autofunction:: deltas.algorithms.sequence_matcher.process
 
 .. autoclass:: deltas.SequenceMatcher
     :members:

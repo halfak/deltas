@@ -20,9 +20,8 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
 
     * whitespace : :class:`~deltas.Segment`
     * paragraph : :class:`~deltas.MatchableSegment`
-
-     * sentence : :class:`~deltas.MatchableSegment`
-     * whitespace : :class:`~deltas.Segment`
+      * sentence : :class:`~deltas.MatchableSegment`
+      * whitespace : :class:`~deltas.Segment`
 
     :Example:
         >>> from deltas import ParagraphsSentencesAndWhitespace, text_split
@@ -34,22 +33,23 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         >>> segments = segmenter.segment(a)
         >>>
         >>> print_tree(segments)
-        MatchableSegment: 'This comes first.  This comes second.'
-            MatchableSegment: 'This comes first.'
-            Segment: '  '
-            MatchableSegment: 'This comes second.'
+    Segment: 'This comes first.  This comes second.'
+    	MatchableSegment: 'This comes first.  This comes second.'
+    		MatchableSegment: 'This comes first.'
+    		Segment: '  '
+    		MatchableSegment: 'This comes second.'
 
     :Parameters:
-        whitespace : `set` ( `str`)
+        whitespace : `set` ( `str` )
             A set of token types that represent whitespace.
-        paragraph_end : `set` ( `str`)
+        paragraph_end : `set` ( `str` )
             A set of token types that represent the end of a pragraph.
         sentence_end : `set` ( `str`)
             A set of tokens types that represent the end of a sentence.
         min_sentence : `int`
             The minimum non-whitespace tokens that a sentence must contain
             before a sentence_end will be entertained.
-    """
+    """  # noqa
     def __init__(self, *, whitespace=None,
                           paragraph_end=None,
                           sentence_end=None,
@@ -93,10 +93,9 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                                 if non_whitespace >= self.min_sentence:
                                     break
 
-
                         paragraph.append(sentence)
 
-                    else: # look_ahead.peek().type in self.whitespace
+                    else:  # look_ahead.peek().type in self.whitespace
                         whitespace = Segment(look_ahead.i, [next(look_ahead)])
                         paragraph.append(whitespace)
 

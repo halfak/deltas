@@ -1,16 +1,13 @@
 """
-Match segments
---------------
-
 Performs a diffs using a tree of matchable segments in order to remain robust
 to content moves.  This module supports the use of a custom
-:class:`~deltas.segmenters.Segmenter`.
+:class:`~deltas.Segmenter`.
 
-.. automethod:: deltas.segment_matcher.diff
+.. autofunction:: deltas.algorithms.segment_matcher.diff
 
-.. automethod:: deltas.segment_matcher.diff_segments
+.. autofunction:: deltas.algorithms.segment_matcher.diff_segments
 
-.. automethod:: deltas.segment_matcher.process
+.. autofunction:: deltas.algorithms.segment_matcher.process
 
 .. autoclass:: deltas.SegmentMatcher
     :members:
@@ -42,10 +39,11 @@ def diff(a, b, segmenter=None):
         >>> operations = segment_matcher.diff(a, b)
         >>>
         >>> for op in operations:
-        ...     print(op.name, repr(''.join(a[op.a1:op.a2])), repr(''.join(b[op.b1:op.b2])))
+        ...     print(op.name, repr(''.join(a[op.a1:op.a2])),
+        ...           repr(''.join(b[op.b1:op.b2])))
         ...
         equal 'This is some other text.' 'This is some other text.'
-        insert ' ' '  '
+        insert '' '  '
         equal 'This is some text.' 'This is some text.'
         delete '  ' ''
 
@@ -54,7 +52,7 @@ def diff(a, b, segmenter=None):
             Initial sequence
         b : `list`(:class:`deltas.tokenizers.Token`)
             Changed sequence
-        segmenter : :class:`deltas.segmenters.Segmenter`
+        segmenter : :class:`deltas.Segmenter`
             A segmenter to use on the tokens.
 
     :Returns:
@@ -101,16 +99,16 @@ def diff_segments(a_segments, b_segments):
 def process(texts, *args, **kwargs):
     """
     Processes a single sequence of texts with a
-    :class:`~diffengine.SegmentMatcher`.
+    :class:`~deltas.SegmentMatcher`.
 
     :Parameters:
         texts : `iterable`(`str`)
             sequence of texts
         args : `tuple`
-            passed to :class:`~diffengine.SegmentMatcher`'s
+            passed to :class:`~deltas.SegmentMatcher`'s
             constructor
         kwaths : `dict`
-            passed to :class:`~diffengine.SegmentMatcher`'s
+            passed to :class:`~deltas.SegmentMatcher`'s
             constructor
     """
     processor = SegmentMatcher.Processor(*args, **kwargs)
@@ -133,18 +131,18 @@ class SegmentMatcher(DiffEngine):
         >>>
         >>> processor = engine.processor()
         >>> ops, a, b = processor.process("This is a version.  It has some " +
-                                          "text in it.")
+        ...                               "text in it.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'This is a version.  It has some text in it.'
         >>> ops, a, b = processor.process("This is a version.  However, it " +
-                                          "has different.")
+        ...                               "has different.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         'This is a version.  ' '' 'However, it' ' has ' '' 'different' '.'
         >>> ops, a, b = processor.process("Switching it up here.  This is a " +
-                                          "version.")
+        ...                               "version.")
         >>> print(" ".join(repr(''.join(b[op.b1:op.b2])) for op in ops))
         '' 'Switching' ' it ' '' 'up' ' ' '' 'here' '.' '  ' 'This is a version.'
-    """
+    """  # noqa
 
     class Processor(DiffEngine.Processor):
         """

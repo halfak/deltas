@@ -28,7 +28,8 @@ strategies more easily available.  There are currently two strategies available:
     >>> operations = segment_matcher.diff(a, b)
     >>>
     >>> for op in operations:
-    ...     print(op.name, repr(''.join(a[op.a1:op.a2])), repr(''.join(b[op.b1:op.b2])))
+    ...     print(op.name, repr(''.join(a[op.a1:op.a2])),
+    ...           repr(''.join(b[op.b1:op.b2])))
     ...
     equal 'This is some other text.' 'This is some other text.'
     insert ' ' '  '

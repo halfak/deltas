@@ -1,6 +1,8 @@
 """
-Sequence diff generation
-------------------------
+A :class:`deltas.DiffEngine` implements a streaming diff strategy that applies
+a diff algorithm to a sequence of text revisions.  By maintaining an internal
+state, various efficiencies can be implemented.
+
 .. autoclass:: deltas.DiffEngine
     :members:
 """

@@ -1,6 +1,5 @@
 from nose.tools import eq_
 
-from ...tokenizers import wikitext_split
 from ..diff_engine import DiffEngine
 
 
@@ -20,7 +19,7 @@ def test_from_config():
         },
         'tokenizers': {
             'wikitext_split': {
-                'module': "deltas.tokenizers.wikitext_split"
+                'module': "deltas.wikitext_split"
             }
         }
     }
