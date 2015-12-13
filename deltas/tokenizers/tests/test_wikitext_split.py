@@ -8,7 +8,7 @@ def test_wikitext_split():
     input = "As a sentence, this includes punctuation. \n" + \
             "\n" + \
             "==Header!==\n" + \
-            "克·科伊尔 foobar!" + \
+            "克·科伊尔 しメfoobar!" + \
             "And then we have another sentence here!\n" + \
             "https://website.gov?param=value\n" + \
             "peoples' ain't d’encyclopédie\n" + \
@@ -17,7 +17,7 @@ def test_wikitext_split():
     expecteds = ['As', ' ', 'a', ' ', 'sentence', ',', ' ', 'this', ' ',
                  'includes', ' ', 'punctuation', '.', ' \n\n',
                  '==', 'Header', '!', '==', '\n',
-                 '克', '·', '科', '伊', '尔', ' ', 'foobar', '!',
+                 '克', '·', '科', '伊', '尔', ' ', 'し', 'メ', 'foobar', '!',
                  'And', ' ', 'then', ' ', 'we', ' ', 'have', ' ', 'another',
                  ' ', 'sentence',
                  ' ', 'here', '!', '\n', 'https://website.gov?param=value', '\n',

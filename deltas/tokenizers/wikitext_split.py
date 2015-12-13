@@ -40,8 +40,7 @@ url = (
 )
 #re.compile(url, re.U).match("https://website.gov?param=value")
 
-# Matches Chinese, Japanese and Korean characters.  Some ranges are commented
-# out because they match ASCII chars.
+# Matches Chinese, Japanese and Korean characters.
 cjk = (
     r'[' +
         r'\u4E00-\u62FF' +  # Unified Ideographs
@@ -58,6 +57,16 @@ cjk = (
             r'\U00029100-\U0002A6DF' +
         r'\uF900-\uFAFF' +  # Compatibility Ideographs
         r'\U0002F800-\U0002FA1F' +  # Compatibility Ideographs Suppl.
+        r'\u3041-\u3096' +  # Hiragana
+        r'\u30A0-\u30FF' +  # Katakana
+        r'\u3400-\u4DB5' +  # Kanji
+            r'\u4E00-\u9FCB' +
+            r'\uF900-\uFA6A' +
+        r'\u2E80-\u2FD5' +  # Kanji radicals
+        r'\uFF5F-\uFF9F' +  # Katakana and Punctuation (Half Width)
+        r'\x31F0-\x31FF' +  # Miscellaneous Japanese Symbols and Characters
+            r'\x3220-\x3243' +
+            r'\x3280-\x337F'
     r']'
 )
 
@@ -76,6 +85,7 @@ LEXICON = [
     ('comma',         r',+'),
     ('colon',         r':+'),
     ('scolon',        r';+'),
+    ('japan_punct',   r'[\x3000-\x303F]+'),
     ('break',         r'(\n|\n\r|\r\n)\s*(\n|\n\r|\r\n)+'),
     ('whitespace',    r'[\n\r\s]+'),
     ('dbrack_open',   r'\[\['),
