@@ -64,9 +64,9 @@ cjk = (
             r'\uF900-\uFA6A' +
         r'\u2E80-\u2FD5' +  # Kanji radicals
         r'\uFF5F-\uFF9F' +  # Katakana and Punctuation (Half Width)
-        r'\x31F0-\x31FF' +  # Miscellaneous Japanese Symbols and Characters
-            r'\x3220-\x3243' +
-            r'\x3280-\x337F'
+        r'\u31F0-\u31FF' +  # Miscellaneous Japanese Symbols and Characters
+            r'\u3220-\u3243' +
+            r'\u3280-\u337F'
     r']'
 )
 

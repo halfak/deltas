@@ -5,7 +5,7 @@ from ..wikitext_split import wikitext_split
 
 def test_wikitext_split():
 
-    input = "As a sentence, this includes punctuation. \n" + \
+    input = "As a sentence, this 34 includes punctuation. \n" + \
             "\n" + \
             "==Header!==\n" + \
             "克·科伊尔 しメfoobar!" + \
@@ -15,7 +15,7 @@ def test_wikitext_split():
             "mailto:email@email.mail"
 
     expecteds = ['As', ' ', 'a', ' ', 'sentence', ',', ' ', 'this', ' ',
-                 'includes', ' ', 'punctuation', '.', ' \n\n',
+                 '34', ' ', 'includes', ' ', 'punctuation', '.', ' \n\n',
                  '==', 'Header', '!', '==', '\n',
                  '克', '·', '科', '伊', '尔', ' ', 'し', 'メ', 'foobar', '!',
                  'And', ' ', 'then', ' ', 'we', ' ', 'have', ' ', 'another',
