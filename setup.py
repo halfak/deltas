@@ -12,7 +12,7 @@ def requirements(fname):
 
 setup(
     name = "deltas",
-    version = "0.3.5",
+    version = "0.3.6",
     author = "Aaron Halfaker",
     author_email = "ahalfaker@wikimedia.org",
     description = "An experimental diff library for generating " + \
