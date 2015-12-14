@@ -29,13 +29,13 @@ ADDRESS = (
         r'(?:\.(?:[a-z\u00a1-\uffff]{2,}))?' +
     r')' +
     r'(?::\d{2,5})?' +
-    r'(?:[^a-z\u00a1-\uffff0-9][^\s]*)?'
+    r'(?:[^a-z\u00a1-\uffff0-9\]\[][^\]\[\s]*)?'
 )
 
 url = (
     r'(' + \
         r'(' + '|'.join(PLAIN_PROTO) + r')\:|' + \
-        r'(' + '|'.join(SLASHED_PROTO) + r')\:\/\/' + \
+        r'((' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' + \
     r')' + ADDRESS
 )
 #re.compile(url, re.U).match("https://website.gov?param=value")

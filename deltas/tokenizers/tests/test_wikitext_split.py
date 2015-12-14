@@ -10,6 +10,7 @@ def test_wikitext_split():
             "==Header!==\n" + \
             "克·科伊尔 しメfoobar!" + \
             "And then we have another sentence here!\n" + \
+            "[//google.com] " + \
             "https://website.gov?param=value\n" + \
             "peoples' ain't d’encyclopédie\n" + \
             "mailto:email@email.mail"
@@ -20,7 +21,9 @@ def test_wikitext_split():
                  '克', '·', '科', '伊', '尔', ' ', 'し', 'メ', 'foobar', '!',
                  'And', ' ', 'then', ' ', 'we', ' ', 'have', ' ', 'another',
                  ' ', 'sentence',
-                 ' ', 'here', '!', '\n', 'https://website.gov?param=value', '\n',
+                 ' ', 'here', '!', '\n',
+                 '[', '//google.com', ']', ' ',
+                 'https://website.gov?param=value', '\n',
                  'peoples\'', ' ', 'ain\'t', ' ', 'd’encyclopédie', '\n',
                  'mailto:email@email.mail']
 
