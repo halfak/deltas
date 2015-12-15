@@ -78,6 +78,7 @@ LEXICON = [
     ('cjk',           cjk),
     ('tag',           r'<\\?([a-z][a-z0-9]*)\b[^>]*>'),
     ('number',        r'[\d]+'),
+    ('japan_punct',   r'[\u3000-\u303F]'),
     ('word',          r'\w*[^\W\d]([\'’]*\w*)*'),
     ('period',        r'\.+'),
     ('qmark',         r'\?+'),
@@ -85,9 +86,8 @@ LEXICON = [
     ('comma',         r',+'),
     ('colon',         r':+'),
     ('scolon',        r';+'),
-    ('japan_punct',   r'[\x3000-\x303F]+'),
     ('break',         r'(\n|\n\r|\r\n)\s*(\n|\n\r|\r\n)+'),
-    ('whitespace',    r'[\n\r\s]+'),
+    ('whitespace',    r'(\n|\n\r|[^\S\n\r]+)'),
     ('dbrack_open',   r'\[\['),
     ('dbrack_close',  r'\]\]'),
     ('brack_open',    r'\['),
@@ -101,6 +101,7 @@ LEXICON = [
     ("bold",          r"'''"),
     ("italic",        r"''"),
     ("equals",        r"=+"),
+    ("bar",           r"\|"),
     ("etc",           r".")
 ]
 
