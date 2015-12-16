@@ -10,7 +10,7 @@ def test_wikitext_split():
             "==Header!==\n" + \
             "克·科伊尔 し〤。foobar!" + \
             "And then we have another sentence here!\n" + \
-            "[//google.com] " + \
+            "[//google.com foo] " + \
             "https://website.gov?param=value\n" + \
             "peoples' ain't d’encyclopédie\n" + \
             "[[foo|bar]]" + \
@@ -66,6 +66,8 @@ def test_wikitext_split():
                 ('\n', 'whitespace'),
                 ('[', 'brack_open'),
                 ('//google.com', 'url'),
+                (' ', 'whitespace'),
+                ('foo', 'word'),
                 (']', 'brack_close'),
                 (' ', 'whitespace'),
                 ('https://website.gov?param=value', 'url'),
