@@ -10,12 +10,12 @@ SLASHED_PROTO = [r'', r'ftp', r'ftps', r'git', r'gopher', r'https?', r'ircs?',
 ADDRESS = r'[^\s/$.?#].[^\s]*'
 
 url = (
-    r'(' + \
-        r'(' + '|'.join(PLAIN_PROTO) + r')\:|' + \
-        r'((' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' + \
+    r'(' +
+        r'(' + '|'.join(PLAIN_PROTO) + r')\:|' +
+        r'((' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' +
     r')' + ADDRESS
 )
-#re.compile(url, re.U).match("https://website.gov?param=value")
+# re.compile(url, re.U).match("https://website.gov?param=value")
 
 # Matches Chinese, Japanese and Korean characters.
 cjk = (
@@ -47,6 +47,16 @@ cjk = (
     r']'
 )
 
+devangari_word = r'\u0901-\u0963'
+arabic_word = r'\u0601-\u061A' + \
+              r'\u061C-\u0669' + \
+              r'\u06D5-\u06EF'
+
+word = r'\w*' + \
+       r'([^\W\d]|[' + devangari_word + arabic_word + r'])' + \
+       r'([\'’]*[\w' + devangari_word + arabic_word + r']*)*'
+
+
 LEXICON = [
     ('comment_start', r'<!--'),
     ('comment_end',   r'-->'),
@@ -56,7 +66,8 @@ LEXICON = [
     ('tag',           r'<\\?([a-z][a-z0-9]*)\b[^>]*>'),
     ('number',        r'[\d]+'),
     ('japan_punct',   r'[\u3000-\u303F]'),
-    ('word',          r'\w*[^\W\d]([\'’]*\w*)*'),
+    ('danda',         r'।|॥'),
+    ('word',          word),
     ('period',        r'\.+'),
     ('qmark',         r'\?+'),
     ('epoint',        r'!+'),
