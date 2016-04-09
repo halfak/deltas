@@ -8,7 +8,7 @@ from .tokenizers import (Token, Tokenizer, RegexTokenizer, text_split,
 from .segmenters import (Segmenter, Segment, MatchableSegment,
                          ParagraphsSentencesAndWhitespace)
 
-__version__ = "0.3.9"
+__version__ = "0.3.10"
 
 __all__ = [apply,
            Operation, Insert, Delete, Equal,
