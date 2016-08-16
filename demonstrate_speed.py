@@ -8,17 +8,14 @@ from deltas.segmenters import ParagraphsSentencesAndWhitespace
 from deltas.tokenizers import wikitext_split, text_split
 from mw import api
 
-tokenizer = wikitext_split
-# tokenizer = text_split
-
 segmenter = ParagraphsSentencesAndWhitespace()
 
 session = api.Session("https://en.wikipedia.org/w/api.php")
 common1 = session.revisions.get(638029546, properties={"content"})['*']
 common2 = session.revisions.get(638077284, properties={"content"})['*']
 
-common1_tokens = list(tokenizer.tokenize(common1))
-common2_tokens = list(tokenizer.tokenize(common2))
+common1_tokens = list(wikitext_split.tokenize(common1))
+common2_tokens = list(wikitext_split.tokenize(common2))
 
 words = [l.strip() for l in open('/usr/share/dict/words')]
 random1 = ''.join(random.choice(words) if t.type == "word" else str(t)
@@ -26,15 +23,20 @@ random1 = ''.join(random.choice(words) if t.type == "word" else str(t)
 random2 = ''.join(random.choice(words) if t.type == "word" else str(t)
                   for t in common1_tokens)
 
-random2_tokens = list(tokenizer.tokenize(random2))
-random1_tokens = list(tokenizer.tokenize(random1))
+random2_tokens = list(wikitext_split.tokenize(random2))
+random1_tokens = list(wikitext_split.tokenize(random1))
 
-print("Tokenizing:")
+print("Tokenizing (text_split):")
 def tokenize_common():
     start = time.time()
-    for _ in range(25):
-        tokens = list(tokenizer.tokenize(common1))
-    print("\tcommon: {0}".format((time.time() - start)/25))
+    for _ in range(50):
+        tokens = list(text_split.tokenize(common1))
+    print("\ttext_split: {0}".format((time.time() - start)/50))
+
+    start = time.time()
+    for _ in range(50):
+        tokens = list(wikitext_split.tokenize(common1))
+    print("\twikitext_split: {0}".format((time.time() - start)/50))
 tokenize_common()
 #profile.run('segment_common()', sort="cumulative")
 
