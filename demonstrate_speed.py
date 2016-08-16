@@ -5,10 +5,12 @@ import pickle
 
 from deltas import segment_matcher, sequence_matcher
 from deltas.segmenters import ParagraphsSentencesAndWhitespace
-from deltas.tokenizers import wikitext_split
+from deltas.tokenizers import wikitext_split, text_split
 from mw import api
 
 tokenizer = wikitext_split
+# tokenizer = text_split
+
 segmenter = ParagraphsSentencesAndWhitespace()
 
 session = api.Session("https://en.wikipedia.org/w/api.php")
