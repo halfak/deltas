@@ -6,7 +6,9 @@ from .segments import MatchableSegment, Segment
 
 WHITESPACE = set(["whitespace", "break"])
 PARAGRAPH_END = set(["break"])
-SENTENCE_END = set(["period", "epoint", "qmark"])
+SENTENCE_END = set(["period", "epoint", "qmark", "tab_open"])
+SUB_OPEN = set(["brack_open", "dbrack_open", "paren_open", "ref_open"])
+SUB_CLOSE = set(["brack_close", "dbrack_close", "paren_close", "ref_close"])
 MIN_SENTENCE = 3
 
 
@@ -50,10 +52,8 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
             The minimum non-whitespace tokens that a sentence must contain
             before a sentence_end will be entertained.
     """  # noqa
-    def __init__(self, *, whitespace=None,
-                          paragraph_end=None,
-                          sentence_end=None,
-                          min_sentence=None):
+    def __init__(self, *, whitespace=None, paragraph_end=None,
+                 sentence_end=None, min_sentence=None):
 
         self.whitespace = set(whitespace or WHITESPACE)
         self.paragraph_end = set(paragraph_end or PARAGRAPH_END)
@@ -73,22 +73,33 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
 
         while not look_ahead.empty():
 
-            if look_ahead.peek().type not in self.whitespace: # Paragraph!
+            if look_ahead.peek().type not in self.whitespace:  # Paragraph!
                 paragraph = MatchableSegment(look_ahead.i)
 
                 while not look_ahead.empty() and \
                       look_ahead.peek().type not in self.paragraph_end:
 
-                    if look_ahead.peek().type not in self.whitespace: #Sentence!
-                        sentence = MatchableSegment(look_ahead.i,
-                                                    [next(look_ahead)])
+                    if look_ahead.peek().type == "tab_open":  # Table
+                        tab_depth = 1
+                        sentence = MatchableSegment(
+                            look_ahead.i, [next(look_ahead)])
+                        while not look_ahead.empty() and tab_depth > 0:
+                            tab_depth += look_ahead.peek().type == "tab_open"
+                            tab_depth -= look_ahead.peek().type == "tab_close"
+                            sentence.append(next(look_ahead))
 
+                    elif look_ahead.peek().type not in self.whitespace:  # Sentence!
+                        sentence = MatchableSegment(
+                            look_ahead.i, [next(look_ahead)])
+                        sub_depth = int(sentence[0].type in SUB_OPEN)
                         while not look_ahead.empty() and \
                               look_ahead.peek().type not in self.paragraph_end:
 
+                            sub_depth += look_ahead.peek().type in SUB_OPEN
+                            sub_depth -= look_ahead.peek().type in SUB_CLOSE
                             sentence.append(next(look_ahead))
 
-                            if sentence[-1].type in self.sentence_end:
+                            if sentence[-1].type in self.sentence_end and sub_depth <= 0:
                                 non_whitespace = sum(s.type not in self.whitespace for s in sentence)
                                 if non_whitespace >= self.min_sentence:
                                     break

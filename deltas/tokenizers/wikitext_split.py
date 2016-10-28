@@ -1,5 +1,3 @@
-import re
-
 from .tokenizer import RegexTokenizer
 
 PLAIN_PROTO = [r'bitcoin', r'geo', r'magnet', r'mailto', r'news', r'sips?',
@@ -25,7 +23,7 @@ cjk = (
             r'\u7800-\u8CFF' +
             r'\u8D00-\u9FCC' +
         r'\u3400-\u4DFF' +  # Unified Ideographs Ext A
-        r'\U00020000-\U000215FF' + # Unified Ideographs Ext. B
+        r'\U00020000-\U000215FF' +  # Unified Ideographs Ext. B
             r'\U00021600-\U000230FF' +
             r'\U00023100-\U000245FF' +
             r'\U00024600-\U000260FF' +
@@ -63,7 +61,10 @@ LEXICON = [
     ("url",           url),
     ('entity',        r'&[a-z][a-z0-9]*;'),
     ('cjk',           cjk),
-    ('tag',           r'<\\?([a-z][a-z0-9]*)\b[^>]*>'),
+    ('ref_open',      r'<ref\b[^>/]*>'),
+    ('ref_close',     r'</ref\b[^>]*>'),
+    ('ref_singleton', r'<ref\b[^>/]*/>'),
+    ('tag',           r'</?([a-z][a-z0-9]*)\b[^>]*>'),
     ('number',        r'[\d]+'),
     ('japan_punct',   r'[\u3000-\u303F]'),
     ('danda',         r'।|॥'),
@@ -80,6 +81,8 @@ LEXICON = [
     ('dbrack_close',  r'\]\]'),
     ('brack_open',    r'\['),
     ('brack_close',   r'\]'),
+    ('paren_open',    r'\('),
+    ('paren_close',   r'\)'),
     ('tab_open',      r'\{\|'),
     ('tab_close',     r'\|\}'),
     ('dcurly_open',   r'\{\{'),

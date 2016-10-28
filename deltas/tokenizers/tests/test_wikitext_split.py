@@ -15,6 +15,7 @@ def test_wikitext_split():
             "[//google.com foo] " + \
             "https://website.gov?param=value\n" + \
             "peoples' ain't d’encyclopédie\n" + \
+            "<ref>derp</ref><ref name=\"foo\" />" + \
             "[[foo|bar]]" + \
             "mailto:email@email.mail"
 
@@ -86,6 +87,10 @@ def test_wikitext_split():
                 (' ', 'whitespace'),
                 ('d’encyclopédie', 'word'),
                 ('\n', 'whitespace'),
+                ('<ref>', 'ref_open'),
+                ('derp', 'word'),
+                ('</ref>', 'ref_close'),
+                ('<ref name="foo" />', 'ref_singleton'),
                 ('[[', 'dbrack_open'),
                 ('foo', 'word'),
                 ('|', 'bar'),
@@ -156,11 +161,11 @@ def test_hebrew():
                 ("האדר", "word"),
                 ('"', "etc"),
                 (" ", "whitespace"),
-                ('(', "etc"),
+                ('(', "paren_open"),
                 ("או", "word"),
                 (" ", "whitespace"),
                 ("המייפל", "word"),
-                (")", "etc"),
+                (")", "paren_close"),
                 (" ", "whitespace"),
                 ("אומץ", "word"),
                 (" ", "whitespace"),
