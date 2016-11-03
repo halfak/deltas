@@ -26,7 +26,7 @@ random2 = ''.join(random.choice(words) if t.type == "word" else str(t)
 random2_tokens = list(wikitext_split.tokenize(random2))
 random1_tokens = list(wikitext_split.tokenize(random1))
 
-print("Tokenizing (text_split):")
+print("Tokenizing:")
 def tokenize_common():
     start = time.time()
     for _ in range(50):
