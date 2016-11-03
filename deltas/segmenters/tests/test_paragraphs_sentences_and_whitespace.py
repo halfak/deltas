@@ -13,7 +13,7 @@ def test_segment():
     segmenter = ParagraphsSentencesAndWhitespace()
 
     text = 'This is some text.  This is some other text.\n ' + \
-           'A. Peterson is a name that I made up.\n' + \
+           'A. Peterson is a name that <!-- This is derp. --> I made up.\n' + \
            'This is an additional sentence.\n' + \
            '\n' + \
            '== OMG HEADER ==\n' + \

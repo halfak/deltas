@@ -1,14 +1,14 @@
-import re
-
 from ..util import LookAhead
 from .segmenter import Segmenter
 from .segments import MatchableSegment, Segment
 
-WHITESPACE = set(["whitespace", "break"])
-PARAGRAPH_END = set(["break"])
-SENTENCE_END = set(["period", "epoint", "qmark", "tab_open"])
-SUB_OPEN = set(["brack_open", "dbrack_open", "paren_open", "ref_open"])
-SUB_CLOSE = set(["brack_close", "dbrack_close", "paren_close", "ref_close"])
+WHITESPACE = {"whitespace", "break"}
+PARAGRAPH_END = {"break"}
+SENTENCE_END = {"period", "epoint", "qmark", "tab_open"}
+SUB_OPEN = {"brack_open", "dbrack_open", "paren_open", "ref_open",
+            "comment_start"}
+SUB_CLOSE = {"brack_close", "dbrack_close", "paren_close", "ref_close",
+             "comment_end"}
 MIN_SENTENCE = 3
 
 
