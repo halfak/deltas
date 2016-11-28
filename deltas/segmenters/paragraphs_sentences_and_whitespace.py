@@ -6,9 +6,9 @@ WHITESPACE = {"whitespace", "break"}
 PARAGRAPH_END = {"break"}
 SENTENCE_END = {"period", "epoint", "qmark", "tab_open"}
 SUB_OPEN = {"brack_open", "dbrack_open", "paren_open", "ref_open",
-            "comment_start"}
+            "comment_start", "dcurly_open"}
 SUB_CLOSE = {"brack_close", "dbrack_close", "paren_close", "ref_close",
-             "comment_end"}
+             "comment_end", "dcurly_close"}
 MIN_SENTENCE = 3
 
 
@@ -92,8 +92,7 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                         sentence = MatchableSegment(
                             look_ahead.i, [next(look_ahead)])
                         sub_depth = int(sentence[0].type in SUB_OPEN)
-                        while not look_ahead.empty() and \
-                              look_ahead.peek().type not in self.paragraph_end:
+                        while not look_ahead.empty():
 
                             sub_depth += look_ahead.peek().type in SUB_OPEN
                             sub_depth -= look_ahead.peek().type in SUB_CLOSE
