@@ -17,7 +17,8 @@ def test_wikitext_split():
             "peoples' ain't d’encyclopédie\n" + \
             "<ref>derp</ref><ref name=\"foo\" />" + \
             "[[foo|bar]]" + \
-            "mailto:email@email.mail"
+            "mailto:email@email.mail " + \
+            "위키백과의 운영은 비영리 단체인 위키미디어 재단이"
 
     expected = [('As', 'word'),
                 (' ', 'whitespace'),
@@ -96,7 +97,19 @@ def test_wikitext_split():
                 ('|', 'bar'),
                 ('bar', 'word'),
                 (']]', 'dbrack_close'),
-                ('mailto:email@email.mail', 'url')]
+                ('mailto:email@email.mail', 'url'),
+                (' ', 'whitespace'),
+                ('위키백과의', 'word'),
+                (' ', 'whitespace'),
+                ('운영은', 'word'),
+                (' ', 'whitespace'),
+                ('비영리', 'word'),
+                (' ', 'whitespace'),
+                ('단체인', 'word'),
+                (' ', 'whitespace'),
+                ('위키미디어', 'word'),
+                (' ', 'whitespace'),
+                ('재단이', 'word')]
 
     tokens = list(wikitext_split.tokenize(input))
 
