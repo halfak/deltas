@@ -2,27 +2,29 @@ import os
 
 from setuptools import find_packages, setup
 
+about_path = os.path.join(os.path.dirname(__file__), "deltas/about.py")
+exec(compile(open(about_path).read(), about_path, "exec"))
+
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 def requirements(fname):
     return [line.strip()
             for line in open(os.path.join(os.path.dirname(__file__), fname))]
 
 setup(
-    name = "deltas",
-    version = "0.4.2",
-    author = "Aaron Halfaker",
-    author_email = "ahalfaker@wikimedia.org",
-    description = "An experimental diff library for generating " + \
-                  "operation deltas that represent the " + \
-                  "difference between two sequences of comparable items.",
-    license = "MIT",
-    url = "https://github.com/halfak/Deltas",
+    name=__name__,  # noqa
+    version=__version__,  # noqa
+    author=__author__,  # noqa
+    author_email=__author_email__,  # noqa
+    description=__description__,  # noqa
+    url=__url__,  # noqa
+    license=__license__,  # noqa
     packages=find_packages(),
-    long_description = read('README.rst'),
-    install_requires = ['yamlconf'],
+    long_description=read('README.rst'),
+    install_requires=['yamlconf'],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

@@ -8,7 +8,8 @@ from .tokenizers import (Token, Tokenizer, RegexTokenizer, text_split,
 from .segmenters import (Segmenter, Segment, MatchableSegment,
                          ParagraphsSentencesAndWhitespace)
 
-__version__ = "0.4.2"
+from .about import (__name__, __version__, __author__, __author_email__,
+                    __description__, __license__, __url__)
 
 __all__ = [apply,
            Operation, Insert, Delete, Equal,
@@ -17,4 +18,6 @@ __all__ = [apply,
            sequence_matcher, SequenceMatcher,
            Token, Tokenizer, RegexTokenizer, text_split, wikitext_split,
            Segmenter, Segment, MatchableSegment,
-           ParagraphsSentencesAndWhitespace]
+           ParagraphsSentencesAndWhitespace,
+           __name__, __version__, __author__, __author_email__,
+           __description__, __license__, __url__]
