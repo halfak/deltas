@@ -50,9 +50,8 @@ arabic_word = r'\u0601-\u061A' + \
               r'\u061C-\u0669' + \
               r'\u06D5-\u06EF'
 
-word = r'\w*' + \
-       r'([^\W\d]|[' + devangari_word + arabic_word + r'])' + \
-       r'([\'’]*[\w' + devangari_word + arabic_word + r']*)*'
+word = r'([^\W\d]|[' + devangari_word + arabic_word + r'])+' + \
+       r'([\'’]([\w' + devangari_word + arabic_word + r']+|(?=($|\s))))*'
 
 
 LEXICON = [
@@ -68,6 +67,8 @@ LEXICON = [
     ('number',        r'[\d]+'),
     ('japan_punct',   r'[\u3000-\u303F]'),
     ('danda',         r'।|॥'),
+    ("bold",          r"'''"),
+    ("italic",        r"''"),
     ('word',          word),
     ('period',        r'\.+'),
     ('qmark',         r'\?+'),
@@ -89,8 +90,6 @@ LEXICON = [
     ('dcurly_close',  r'\}\}'),
     ('curly_open',    r'\{'),
     ('curly_close',   r'\}'),
-    ("bold",          r"'''"),
-    ("italic",        r"''"),
     ("equals",        r"=+"),
     ("bar",           r"\|"),
     ("etc",           r".")

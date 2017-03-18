@@ -18,7 +18,8 @@ def test_wikitext_split():
             "<ref>derp</ref><ref name=\"foo\" />" + \
             "[[foo|bar]]" + \
             "mailto:email@email.mail " + \
-            "위키백과의 운영은 비영리 단체인 위키미디어 재단이"
+            "위키백과의 운영은 비영리 단체인 위키미디어 재단이 " + \
+            "'''some bold''' text"
 
     expected = [('As', 'word'),
                 (' ', 'whitespace'),
@@ -109,7 +110,13 @@ def test_wikitext_split():
                 (' ', 'whitespace'),
                 ('위키미디어', 'word'),
                 (' ', 'whitespace'),
-                ('재단이', 'word')]
+                ('재단이', 'word'),
+                (' ', 'whitespace'),
+                ("'''", 'bold'),
+                ('some', 'word'),
+                (' ', 'whitespace'),
+                ('bold', 'word'),
+                ("'''", 'bold')]
 
     tokens = list(wikitext_split.tokenize(input))
 
