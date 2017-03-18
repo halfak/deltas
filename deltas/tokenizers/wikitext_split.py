@@ -18,7 +18,7 @@ url = (
 # Matches Chinese, Japanese and Korean characters.
 cjk = (
     r'[' +
-        r'\u4E00-\u62FF' +  # Unified Ideographs
+        r'\u4E00-\u62FF' +  # noqa Unified Ideographs
             r'\u6300-\u77FF' +
             r'\u7800-\u8CFF' +
             r'\u8D00-\u9FCC' +
@@ -50,7 +50,8 @@ arabic_word = r'\u0601-\u061A' + \
               r'\u061C-\u0669' + \
               r'\u06D5-\u06EF'
 
-word = r'([^\W\d]|[' + devangari_word + arabic_word + r'])+' + \
+word = r'([^\W\d]|[' + devangari_word + arabic_word + r'])' + \
+       r'[\w' + devangari_word + arabic_word + r']*' + \
        r'([\'’]([\w' + devangari_word + arabic_word + r']+|(?=($|\s))))*'
 
 

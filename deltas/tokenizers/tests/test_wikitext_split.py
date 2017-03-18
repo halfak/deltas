@@ -19,7 +19,7 @@ def test_wikitext_split():
             "[[foo|bar]]" + \
             "mailto:email@email.mail " + \
             "위키백과의 운영은 비영리 단체인 위키미디어 재단이 " + \
-            "'''some bold''' text"
+            "'''some bold''' text m80"
 
     expected = [('As', 'word'),
                 (' ', 'whitespace'),
@@ -116,7 +116,11 @@ def test_wikitext_split():
                 ('some', 'word'),
                 (' ', 'whitespace'),
                 ('bold', 'word'),
-                ("'''", 'bold')]
+                ("'''", 'bold'),
+                (' ', 'whitespace'),
+                ('text', 'word'),
+                (' ', 'whitespace'),
+                ('m80', 'word')]
 
     tokens = list(wikitext_split.tokenize(input))
 
