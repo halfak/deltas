@@ -19,6 +19,7 @@ def test_wikitext_split():
             "[[foo|bar]]" + \
             "mailto:email@email.mail " + \
             "위키백과의 운영은 비영리 단체인 위키미디어 재단이 " + \
+            "দেখার পর তিনি চ্চিত্র " + \
             "'''some bold''' text m80"
 
     expected = [('As', 'word'),
@@ -111,6 +112,14 @@ def test_wikitext_split():
                 ('위키미디어', 'word'),
                 (' ', 'whitespace'),
                 ('재단이', 'word'),
+                (' ', 'whitespace'),
+                ('দেখার', 'word'),
+                (' ', 'whitespace'),
+                ('পর', 'word'),
+                (' ', 'whitespace'),
+                ('তিনি', 'word'),
+                (' ', 'whitespace'),
+                ('চ্চিত্র', 'word'),
                 (' ', 'whitespace'),
                 ("'''", 'bold'),
                 ('some', 'word'),

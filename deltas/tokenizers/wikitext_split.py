@@ -8,8 +8,8 @@ SLASHED_PROTO = [r'', r'ftp', r'ftps', r'git', r'gopher', r'https?', r'ircs?',
 ADDRESS = r'[^\s/$.?#].[^\s]*'
 
 url = (
-    r'(' +
-        r'(' + '|'.join(PLAIN_PROTO) + r')\:|' +
+    r'(' +  # noqa
+        r'(' + '|'.join(PLAIN_PROTO) + r')\:|' +  # noqa
         r'((' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' +
     r')' + ADDRESS
 )
@@ -49,10 +49,12 @@ devangari_word = r'\u0901-\u0963'
 arabic_word = r'\u0601-\u061A' + \
               r'\u061C-\u0669' + \
               r'\u06D5-\u06EF'
+bengali_word = r'\u0980-\u09FF'
+combined_word = devangari_word + arabic_word + bengali_word
 
-word = r'([^\W\d]|[' + devangari_word + arabic_word + r'])' + \
-       r'[\w' + devangari_word + arabic_word + r']*' + \
-       r'([\'’]([\w' + devangari_word + arabic_word + r']+|(?=($|\s))))*'
+word = r'([^\W\d]|[' + combined_word + r'])' + \
+       r'[\w' + combined_word + r']*' + \
+       r'([\'’]([\w' + combined_word + r']+|(?=($|\s))))*'
 
 
 LEXICON = [
