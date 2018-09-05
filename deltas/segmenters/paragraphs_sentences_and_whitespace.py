@@ -88,6 +88,8 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                             tab_depth -= look_ahead.peek().type == "tab_close"
                             sentence.append(next(look_ahead))
 
+                        paragraph.append(sentence)
+
                     elif look_ahead.peek().type not in self.whitespace:  # Sentence!
                         sentence = MatchableSegment(
                             look_ahead.i, [next(look_ahead)])

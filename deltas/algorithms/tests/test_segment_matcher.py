@@ -66,7 +66,7 @@ they are unable to for health reasons. The two main tours are:
     operations, a, b = next(operation_tokens)
 
     operations, a, b = next(operation_tokens)
-    
+
     operations, a, b = next(operation_tokens)
 
     eq_(
@@ -75,3 +75,24 @@ they are unable to for health reasons. The two main tours are:
          Delete(name='delete', a1=105, a2=109, b1=105, b2=105),
          Equal(name='equal', a1=109, a2=168, b1=105, b2=164)]
     )
+
+
+def test_revisions():
+    from ...segmenters import ParagraphsSentencesAndWhitespace
+    segmenter = ParagraphsSentencesAndWhitespace()
+    a = """
+    {| class=&quot;wikitable&quot; |}
+    #&quot;Huger than Huge&quot; – ''Jordan''
+    """  # noqa
+
+    b = """
+    {| class=&quot;wikitable&quot; |}
+    #&quot;Huger than Huge&quot; – ''Jordan (of Dan and Jordan)''
+    """  # noqa
+    at = wikitext_split.tokenize(a)
+    bt = wikitext_split.tokenize(b)
+    operations = diff(at, bt)
+
+    added_content = ", ".join("".join(bt[i] for i in range(op.b1, op.b2))
+                              for op in operations if op.name == "insert")
+    eq_(added_content, " (of Dan and Jordan)")
