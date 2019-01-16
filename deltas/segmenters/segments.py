@@ -94,7 +94,7 @@ class MatchableSegment(Segment):
 
     def initialize(self, *args, **kwargs):
         super().initialize(*args, **kwargs)
-        self.sha1 = hashlib.sha1(bytes(str(self), 'utf-8'))
+        self.sha1 = hashlib.sha1(bytes(str(self), 'utf-8', errors = "replace"))
         self.match = None
 
     def __eq__(self, other):
@@ -117,7 +117,7 @@ class MatchableSegment(Segment):
 
     def append(self, subsegment):
         super().append(subsegment)
-        self.sha1.update(bytes(str(subsegment), 'utf-8'))
+        self.sha1.update(bytes(str(subsegment), 'utf-8', errors = "replace"))
 
     def extend(self, subsegments):
         for subsegment in subsegments:
