@@ -1,4 +1,6 @@
 from .apply import apply
+from .apply_get_a import apply_get_a
+from .apply_get_b import apply_get_b
 from .operations import Operation, Insert, Delete, Equal
 from .algorithms.diff_engine import DiffEngine
 from .algorithms import segment_matcher, SegmentMatcher
@@ -11,7 +13,7 @@ from .segmenters import (Segmenter, Segment, MatchableSegment,
 from .about import (__name__, __version__, __author__, __author_email__,
                     __description__, __license__, __url__)
 
-__all__ = [apply,
+__all__ = [apply, apply_get_a, apply_get_b,
            Operation, Insert, Delete, Equal,
            DiffEngine,
            segment_matcher, SegmentMatcher,
