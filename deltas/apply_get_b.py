@@ -1,21 +1,27 @@
+from pprint import pprint
+
 def apply_get_b(operations_diff_file):
 
-    length_b = max([operation["b2"] for operation in operations_diff_file])
-    b = [''] * length_b
+    try:
 
-    for operation in operations_diff_file:
+        length_b = max([operation["b2"] for operation in operations_diff_file])
+        b = [''] * length_b
 
-        if operation["name"] == "equal" or operation["name"] == "insert":
-            #print("Equal: {0}".format(str(a_tokens[operation.a1:operation.a2])))
-            if "tokens" in operation.keys():
-                b[operation["b1"]:operation["b2"]] = operation["tokens"]
+        for operation in operations_diff_file:
 
-        elif operation["name"] == "delete":
-            #print("Insert: {0}".format(str(b_tokens[operation.b1:operation.b2])))
-            pass
+            if operation["name"] == "equal" or operation["name"] == "insert":
+                #print("Equal: {0}".format(str(a_tokens[operation.a1:operation.a2])))
+                if "tokens" in operation.keys():
+                    b[operation["b1"]:operation["b2"]] = operation["tokens"]
 
-        else:
-            raise TypeError("Unexpected operation type " + \
-                            "{0}".format(type(operation)))
+            elif operation["name"] == "delete":
+                #print("Insert: {0}".format(str(b_tokens[operation.b1:operation.b2])))
+                pass
 
-    return ' '.join(b)
+            else:
+                raise TypeError("Unexpected operation type " + \
+                                "{0}".format(type(operation)))
+
+        return ' '.join(b)
+    except:
+        pprint(operations_diff_file)
