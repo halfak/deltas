@@ -2,15 +2,15 @@ from .tokenizer import RegexTokenizer
 
 PLAIN_PROTO = [r'bitcoin', r'geo', r'magnet', r'mailto', r'news', r'sips?',
                r'tel', r'urn']
-SLASHED_PROTO = [r'', r'ftp', r'ftps', r'git', r'gopher', r'https?', r'ircs?',
+SLASHED_PROTO = [r'https?', r'ftp', r'ftps', r'git', r'gopher', r'ircs?',
                  r'mms', r'nntp', r'redis', r'sftp', r'ssh', r'svn', r'telnet',
                  r'worldwind', r'xmpp']
-ADDRESS = r'[^\s/$.?#].[^\s]*'
+ADDRESS = r'[^\s/$.?#][^|<>\s{}]*'
 
 url = (
-    r'(' +  # noqa
-        r'(' + '|'.join(PLAIN_PROTO) + r')\:|' +  # noqa
-        r'((' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' +
+    r'(?:' +  # noqa
+        r'(?:' + '|'.join(PLAIN_PROTO) + r')\:|' +  # noqa
+        r'(?:(?:' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' +
     r')' + ADDRESS
 )
 # re.compile(url, re.U).match("https://website.gov?param=value")
@@ -52,50 +52,49 @@ arabic_word = r'\u0601-\u061A' + \
 bengali_word = r'\u0980-\u09FF'
 combined_word = devangari_word + arabic_word + bengali_word
 
-word = r'([^\W\d]|[' + combined_word + r'])' + \
+word = r'(?:[^\W\d]|[' + combined_word + r'])' + \
        r'[\w' + combined_word + r']*' + \
-       r'([\'’]([\w' + combined_word + r']+|(?=($|\s))))*'
-
+       r'(?:[\'’](?:[\w' + combined_word + r']+|(?=(?:$|\s))))*'
 
 LEXICON = [
+    ('break', r'(?:\n\r?|\r\n)\s*(?:\n\r?|\r\n)+'),
+    ('whitespace', r'(?:\n\r?|[^\S\n\r]+)'),
+    ("url", url),
+    ("equals", r"=+"),
+    ("bar", r"\|"),
+    ('entity', r'&[a-z][a-z0-9]*;'),
+    ('ref_open', r'<ref\b(?:\/(?!>)|[^>\/])*>'),
+    ('ref_close', r'</ref\b[^>]*>'),
+    ('ref_singleton', r'<ref\b(?:\/(?!>)|[^>])*\/>'),
+    ('tag', r'</?([a-z][a-z0-9]*)\b[^>]*>'),
+    ('number', r'\d+'),
+    ("bold", r"'''"),
+    ("italic", r"''"),
+    ('japan_punct', r'[\u3000-\u303F]'),
+    ('cjk', cjk),
+    ('word', word),
+    ('tab_open', r'\{\|'),
+    ('tab_close', r'\|\}'),
+    ('dbrack_open', r'\[\['),
+    ('dbrack_close', r'\]\]'),
+    ('brack_open', r'\['),
+    ('brack_close', r'\]'),
+    ('paren_open', r'\('),
+    ('paren_close', r'\)'),
+    ('dcurly_open', r'\{\{'),
+    ('dcurly_close', r'\}\}'),
+    ('curly_open', r'\{'),
+    ('curly_close', r'\}'),
+    ('period', r'\.+'),
+    ('qmark', r'\?+'),
+    ('epoint', r'!+'),
+    ('comma', r',+'),
+    ('colon', r':+'),
+    ('scolon', r';+'),
     ('comment_start', r'<!--'),
-    ('comment_end',   r'-->'),
-    ("url",           url),
-    ('entity',        r'&[a-z][a-z0-9]*;'),
-    ('cjk',           cjk),
-    ('ref_open',      r'<ref\b[^>/]*>'),
-    ('ref_close',     r'</ref\b[^>]*>'),
-    ('ref_singleton', r'<ref\b[^>/]*/>'),
-    ('tag',           r'</?([a-z][a-z0-9]*)\b[^>]*>'),
-    ('number',        r'[\d]+'),
-    ('japan_punct',   r'[\u3000-\u303F]'),
-    ('danda',         r'।|॥'),
-    ("bold",          r"'''"),
-    ("italic",        r"''"),
-    ('word',          word),
-    ('period',        r'\.+'),
-    ('qmark',         r'\?+'),
-    ('epoint',        r'!+'),
-    ('comma',         r',+'),
-    ('colon',         r':+'),
-    ('scolon',        r';+'),
-    ('break',         r'(\n|\n\r|\r\n)\s*(\n|\n\r|\r\n)+'),
-    ('whitespace',    r'(\n|\n\r|[^\S\n\r]+)'),
-    ('dbrack_open',   r'\[\['),
-    ('dbrack_close',  r'\]\]'),
-    ('brack_open',    r'\['),
-    ('brack_close',   r'\]'),
-    ('paren_open',    r'\('),
-    ('paren_close',   r'\)'),
-    ('tab_open',      r'\{\|'),
-    ('tab_close',     r'\|\}'),
-    ('dcurly_open',   r'\{\{'),
-    ('dcurly_close',  r'\}\}'),
-    ('curly_open',    r'\{'),
-    ('curly_close',   r'\}'),
-    ("equals",        r"=+"),
-    ("bar",           r"\|"),
-    ("etc",           r".")
+    ('comment_end', r'-->'),
+    ('danda', r'।|॥'),
+    ("etc", r"."),
 ]
 
 wikitext_split = RegexTokenizer(LEXICON)
