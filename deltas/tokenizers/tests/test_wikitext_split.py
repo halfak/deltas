@@ -20,7 +20,10 @@ def test_wikitext_split():
             "mailto:email@email.mail " + \
             "위키백과의 운영은 비영리 단체인 위키미디어 재단이 " + \
             "দেখার পর তিনি চ্চিত্র " + \
-            "'''some bold''' text m80"
+            "'''some bold''' text m80" + \
+            "<ref name=\"doi10.1093/qjmam/1.1.287\">" + \
+            "https://web.archive.org/web/20150905180420/" \
+            "http://www.turing.org.uk/sources/biblio3.html|archive-date=5"
 
     expected = [('As', 'word'),
                 (' ', 'whitespace'),
@@ -129,7 +132,16 @@ def test_wikitext_split():
                 (' ', 'whitespace'),
                 ('text', 'word'),
                 (' ', 'whitespace'),
-                ('m80', 'word')]
+                ('m80', 'word'),
+                ("<ref name=\"doi10.1093/qjmam/1.1.287\">", 'ref_open'),
+                ("https://web.archive.org/web/20150905180420"
+                 "/http://www.turing.org.uk/sources/biblio3.html", 'url'),
+                ('|', 'bar'),
+                ('archive', 'word'),
+                ('-', 'etc'),
+                ('date', 'word'),
+                ('=', 'equals'),
+                ('5', 'number')]
 
     tokens = list(wikitext_split.tokenize(input))
 
