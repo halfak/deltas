@@ -1,0 +1,39 @@
+os: linux
+dist: xenial
+group: stable
+language: python
+python:
+  # Track Python version on future production machines, Debian Stretch.
+  - 3.5
+sudo: required
+addons:
+  apt:
+    packages: []
+
+before_install: {}
+install:
+  - pip install -r requirements.txt
+#  - pip install -r docs/requirements.txt
+  - pip install -r test-requirements.txt
+  - pip install twine
+script:
+  - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,docs
+  - pytest --cov=deltas -m "not nottravis"
+#  - sphinx-build -anW -b html docs dist/docs
+#  - sphinx-build -b linkcheck docs dist/docs
+after_success:
+  - codecov
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#wikimedia-ai"
+    on_success: change
+    on_failure: change
+    template:
+      - "%{repository_slug}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} %{build_url}"
+
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
+  on:
+    branch: master

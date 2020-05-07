@@ -24,7 +24,7 @@ setup(
     license=__license__,  # noqa
     packages=find_packages(),
     long_description=read('README.rst'),
-    install_requires=['yamlconf'],
+    install_requires=requirements('requirements.txt'),
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

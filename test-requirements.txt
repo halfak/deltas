@@ -1,0 +1,5 @@
+pytest
+nose
+flake8
+codecov
+pytest-cov
