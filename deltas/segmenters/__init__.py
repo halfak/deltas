@@ -24,3 +24,7 @@ from .paragraphs_sentences_and_whitespace import ParagraphsSentencesAndWhitespac
 from .segmenter import Segmenter
 from .segments import Segment, MatchableSegment
 from .functions import print_tree
+
+
+__all__ = [ParagraphsSentencesAndWhitespace, Segmenter,
+           Segment, MatchableSegment, print_tree]

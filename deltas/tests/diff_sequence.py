@@ -1,7 +1,6 @@
 from nose.tools import eq_
 
 from ..apply import apply
-from ..tokenizers import text_split
 
 
 def diff_sequence(process, tokenizer=None):
@@ -17,6 +16,5 @@ def diff_sequence(process, tokenizer=None):
     for ops, a, b in token_operations:
         tokens = apply(ops, a, b)
         print("|".join(str(t) for t in b))
-
 
     eq_(''.join(tokens), revisions[-1])

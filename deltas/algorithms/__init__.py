@@ -31,3 +31,6 @@ Diff engine
 from .diff_engine import DiffEngine
 from .segment_matcher import SegmentMatcher
 from .sequence_matcher import SequenceMatcher
+
+
+__all__ = [DiffEngine, SegmentMatcher, SequenceMatcher]

@@ -1,6 +1,6 @@
 
 class LookAhead:
-    
+
     class DONE:
         def __len__(self): return 0
 
@@ -22,7 +22,7 @@ class LookAhead:
 
     def initialize(self, iterable):
         self.iterable = iter(iterable)
-        self.i = -1 # Will increment to zero in a moment
+        self.i = -1  # Will increment to zero in a moment
         self._load_next()
 
     def _load_next(self):

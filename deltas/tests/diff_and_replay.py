@@ -39,7 +39,6 @@ def diff_and_replay(diff):
     replay_b = [str(t) for t in apply(operations, a_tokens, b_tokens)]
     eq_(b, ''.join(replay_b))
 
-
     a = "I'm new here.  This sentence is a sentence. I'm new here."
     b = "I'm new here. Sentence is a sentence."
 

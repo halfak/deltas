@@ -6,7 +6,7 @@ from ..diff_engine import DiffEngine
 def test_from_config():
     doc = {
         'diff_engines': {
-            'segment_matcher':{
+            'segment_matcher': {
                 'class': "deltas.algorithms.SegmentMatcher",
                 'segmenter': "western_psw",
                 'tokenizer': "wikitext_split"

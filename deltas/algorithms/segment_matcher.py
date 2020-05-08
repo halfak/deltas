@@ -149,8 +149,9 @@ class SegmentMatcher(DiffEngine):
         A processor used by the SegmentMatcher difference engine to track the
         history of a single text.
         """
+
         def __init__(self, tokenizer=None, segmenter=None, last_text=None,
-                           last_tokens=None, last_segments=None):
+                     last_tokens=None, last_segments=None):
             self.tokenizer = tokenizer or TOKENIZER
             self.segmenter = segmenter or SEGMENTER
             self.update(last_text, last_tokens, last_segments)
@@ -204,7 +205,6 @@ class SegmentMatcher(DiffEngine):
             # Return delta
             return operations, a, b
 
-
     def __init__(self, tokenizer=None, segmenter=None):
         self.tokenizer = tokenizer or TOKENIZER
         self.segmenter = segmenter or SEGMENTER
@@ -218,7 +218,6 @@ class SegmentMatcher(DiffEngine):
     def process(self, texts, *args, **kwargs):
         return process(texts, self.tokenizer, self.segmenter, *args, **kwargs)
 
-
     @classmethod
     def from_config(cls, config, name, section_key="diff_engines"):
         section = config[section_key][name]
@@ -226,6 +225,7 @@ class SegmentMatcher(DiffEngine):
             Tokenizer.from_config(config, section['tokenizer']),
             Segmenter.from_config(config, section['segmenter'])
         )
+
 
 def _cluster_matching_segments(a_segments, b_segments):
 
@@ -240,12 +240,14 @@ def _cluster_matching_segments(a_segments, b_segments):
 
     return a_segment_tokens, b_segment_tokens
 
+
 def _build_segment_map(segments):
     d = defaultdict(list)
     for matchable_segment in _get_matchable_segments(segments):
         d[matchable_segment].append(matchable_segment)
 
     return d
+
 
 def _get_matchable_segments(segments):
     """
@@ -254,7 +256,7 @@ def _get_matchable_segments(segments):
     """
     for subsegment in segments:
         if isinstance(subsegment, Token):
-            break # No tokens allowed next to segments
+            break  # No tokens allowed next to segments
         if isinstance(subsegment, Segment):
             if isinstance(subsegment, MatchableSegment):
                 yield subsegment
@@ -290,12 +292,12 @@ def _expand_unmatched_segments(a_segments):
 
             if isinstance(subsegment, MatchableSegment) and \
                subsegment.match is not None:
-                yield subsegment # Yield matched segment as cluster
+                yield subsegment  # Yield matched segment as cluster
             else:
                 for seg_or_tok in _expand_unmatched_segments(subsegment):
-                    yield seg_or_tok # Recurse
+                    yield seg_or_tok  # Recurse
         else:
-            yield subsegment # Dump token
+            yield subsegment  # Dump token
 
 
 def _clear_matches(segment):
@@ -306,6 +308,7 @@ def _clear_matches(segment):
         # Recurse!
         for subsegment in segment:
             _clear_matches(subsegment)
+
 
 class SegmentOperationsExpander:
 
@@ -320,25 +323,28 @@ class SegmentOperationsExpander:
     def expand(self):
         for operation in self.operations:
             if isinstance(operation, Equal):
-                #print("Processing equal: {0} {1}".format(self.a_pos, self.b_pos))
+                # print(
+                # "Processing equal: {0} {1}".format(self.a_pos, self.b_pos))
                 expanded_operations = self._process_equal(operation)
             elif isinstance(operation, Insert):
-                #print("Processing insert: {0} {1}".format(self.a_pos, self.b_pos))
+                # print(
+                # "Processing insert: {0} {1}".format(self.a_pos, self.b_pos))
                 expanded_operations = self._process_insert(operation)
             elif isinstance(operation, Delete):
-                #print("Processing remove: {0} {1}".format(self.a_pos, self.b_pos))
+                # print(
+                # "Processing remove: {0} {1}".format(self.a_pos, self.b_pos))
                 expanded_operations = self._process_delete(operation)
             else:
                 assert False, "Should never happen"
 
-            for operation in expanded_operations: yield operation
-
+            for operation in expanded_operations:
+                yield operation
 
     def _process_equal(self, op):
         a1 = self.a_pos
         b1 = self.b_pos
         token_len = sum(1 for t_s in self.a_token_segments[op.a1:op.a2]
-                          for _ in t_s.tokens())
+                        for _ in t_s.tokens())
         self.a_pos += token_len
         self.b_pos += token_len
 
@@ -350,7 +356,7 @@ class SegmentOperationsExpander:
         for t_s in self.b_token_segments[op.b1:op.b2]:
             if isinstance(t_s, Token):
                 inserted_token_count += 1
-            else: # Found a matched segment
+            else:  # Found a matched segment
                 segment = t_s
 
                 # First, emit an insert for the tokens we have seen so far
@@ -366,8 +372,6 @@ class SegmentOperationsExpander:
                 yield Equal(segment.match.start, segment.match.end,
                             b1, self.b_pos)
 
-
-
         # Cleanup!  Make sure we emit any remaining inserted tokens.
         if inserted_token_count > 0:
             b1 = self.b_pos
@@ -381,7 +385,7 @@ class SegmentOperationsExpander:
 
             if isinstance(t_s, Token):
                 removed_token_count += 1
-            else: # Found a matched token... not removed -- just moved
+            else:  # Found a matched token... not removed -- just moved
                 segment = t_s
 
                 if removed_token_count > 0:

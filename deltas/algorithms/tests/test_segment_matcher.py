@@ -1,10 +1,9 @@
 from nose.tools import eq_
 
-from ...apply import apply
 from ...operations import Delete, Equal, Insert
 from ...tests.diff_and_replay import diff_and_replay
 from ...tests.diff_sequence import diff_sequence
-from ...tokenizers import text_split, wikitext_split
+from ...tokenizers import wikitext_split
 from ..segment_matcher import diff, process
 
 
@@ -23,7 +22,7 @@ def test_easy_diff():
     operation_tokens = process([a, b], tokenizer=wikitext_split)
 
     # Apples are red.
-    operations, a, b = next(operation_tokens)
+    next(operation_tokens)
 
     # Apples are tasty and red.
     operations, a, b = next(operation_tokens)
@@ -79,7 +78,7 @@ they are unable to for health reasons. The two main tours are:
 
 def test_revisions():
     from ...segmenters import ParagraphsSentencesAndWhitespace
-    segmenter = ParagraphsSentencesAndWhitespace()
+    ParagraphsSentencesAndWhitespace()
     a = """
     {| class=&quot;wikitable&quot; |}
     #&quot;Huger than Huge&quot; – ''Jordan''
