@@ -1,8 +1,6 @@
-import re
-
 from nose.tools import eq_
 
-from ...tokenizers import Token, wikitext_split
+from ...tokenizers import wikitext_split
 from ..paragraphs_sentences_and_whitespace import \
     ParagraphsSentencesAndWhitespace
 from ..segments import MatchableSegment, Segment

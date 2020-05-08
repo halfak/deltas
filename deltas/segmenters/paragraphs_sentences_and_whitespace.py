@@ -36,10 +36,10 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
         >>>
         >>> print_tree(segments)
         Segment: 'This comes first.  This comes second.'
-        	MatchableSegment: 'This comes first.  This comes second.'
-        		MatchableSegment: 'This comes first.'
-        		Segment: '  '
-        		MatchableSegment: 'This comes second.'
+                MatchableSegment: 'This comes first.  This comes second.'
+                        MatchableSegment: 'This comes first.'
+                        Segment: '  '
+                        MatchableSegment: 'This comes second.'
 
     :Parameters:
         whitespace : `set` ( `str` )
@@ -52,6 +52,7 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
             The minimum non-whitespace tokens that a sentence must contain
             before a sentence_end will be entertained.
     """  # noqa
+
     def __init__(self, *, whitespace=None, paragraph_end=None,
                  sentence_end=None, min_sentence=None):
 
@@ -77,7 +78,7 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                 paragraph = MatchableSegment(look_ahead.i)
 
                 while not look_ahead.empty() and \
-                      look_ahead.peek().type not in self.paragraph_end:
+                        look_ahead.peek().type not in self.paragraph_end:
 
                     if look_ahead.peek().type == "tab_open":  # Table
                         tab_depth = 1
@@ -100,8 +101,11 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                             sub_depth -= look_ahead.peek().type in SUB_CLOSE
                             sentence.append(next(look_ahead))
 
-                            if sentence[-1].type in self.sentence_end and sub_depth <= 0:
-                                non_whitespace = sum(s.type not in self.whitespace for s in sentence)
+                            if sentence[-1].type in \
+                                    self.sentence_end and sub_depth <= 0:
+                                non_whitespace = sum(
+                                    s.type not in self.whitespace
+                                    for s in sentence)
                                 if non_whitespace >= self.min_sentence:
                                     break
 
@@ -112,10 +116,9 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                         paragraph.append(whitespace)
 
                 segments.append(paragraph)
-            else: # look_ahead.peek().type in self.whitespace
+            else:  # look_ahead.peek().type in self.whitespace
                 whitespace = Segment(look_ahead.i, [next(look_ahead)])
                 segments.append(whitespace)
-
 
         return segments
 

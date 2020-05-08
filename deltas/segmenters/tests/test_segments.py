@@ -23,6 +23,7 @@ def test_matchable_segment():
     ms2 = MatchableSegment(0, [Token(c) for c in enumerate(words)])
     assert ms2 in d
 
+
 def test_segment():
 
     words = ["foo", "bar", "baz"]
@@ -31,20 +32,22 @@ def test_segment():
     eq_(ms.start, 0)
     eq_(ms.end, len(words))
 
+
 def test_equality():
     print(hash(MatchableSegment(0, [Token("zero"), Token("one")])))
     print(hash(MatchableSegment(2, [Token("zero"), Token("one")])))
     eq_(MatchableSegment(0, [Token("zero"), Token("one")]),
         MatchableSegment(2, [Token("zero"), Token("one")]))
     eq_(MatchableSegment(0, [
-            MatchableSegment(0, [Token("zero"), Token("one")]),
-            MatchableSegment(2, [Token("two"), Token("three")])
-        ]),
+        MatchableSegment(0, [Token("zero"), Token("one")]),
+        MatchableSegment(2, [Token("two"), Token("three")])
+    ]),
         MatchableSegment(4, [
             MatchableSegment(4, [Token("zero"), Token("one")]),
             MatchableSegment(6, [Token("two"), Token("three")])
         ])
     )
+
 
 def test_pickling():
     segment = MatchableSegment(0, [

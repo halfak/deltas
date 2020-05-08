@@ -34,6 +34,7 @@ def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
+
 lexer = lex()
 
 session = api.Session("https://en.wikipedia.org/w/api.php")
@@ -44,7 +45,7 @@ for i in range(50):
     lexer.input(common1)
     while True:
         token = lexer.token()
-        #print(token)
+        # print(token)
         if token is None:
             break
 

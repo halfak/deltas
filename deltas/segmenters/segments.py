@@ -112,7 +112,8 @@ class MatchableSegment(Segment):
     def __hash__(self):
         return hash(self.sha1.digest())
 
-    def __getstate__(self): return (self.start, list(self))
+    def __getstate__(self): return self.start, list(self)
+
     def __setstate__(self, args): self.initialize(*args)
 
     def append(self, subsegment):

@@ -16,7 +16,7 @@ simple wrapper around :class:`difflib.SequenceMatcher`.
 from difflib import SequenceMatcher as SM
 
 from ..operations import Delete, Equal, Insert
-from ..tokenizers import Token, text_split
+from ..tokenizers import text_split
 from .diff_engine import DiffEngine
 
 TOKENIZER = text_split
