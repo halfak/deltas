@@ -16,7 +16,7 @@ common2 = session.revisions.get(638077284, properties={"content"})['*']
 common1_tokens = list(wikitext_split.tokenize(common1))
 common2_tokens = list(wikitext_split.tokenize(common2))
 
-words = [l.strip() for l in open('/usr/share/dict/words')]
+words = [line.strip() for line in open('/usr/share/dict/words')]
 random1 = ''.join(random.choice(words) if t.type == "word" else str(t)
                   for t in common1_tokens)
 random2 = ''.join(random.choice(words) if t.type == "word" else str(t)
