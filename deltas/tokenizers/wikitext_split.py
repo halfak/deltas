@@ -15,44 +15,20 @@ url = (
 )
 # re.compile(url, re.U).match("https://website.gov?param=value")
 
-# Matches Chinese, Japanese and Korean characters.
-cjk = (
-    r'[' +
-        r'\u4E00-\u62FF' +  # noqa Unified Ideographs
-        r'\u6300-\u77FF' +
-        r'\u7800-\u8CFF' +
-        r'\u8D00-\u9FCC' +
-        r'\u3400-\u4DFF' +  # Unified Ideographs Ext A
-        r'\U00020000-\U000215FF' +  # Unified Ideographs Ext. B
-        r'\U00021600-\U000230FF' +
-        r'\U00023100-\U000245FF' +
-        r'\U00024600-\U000260FF' +
-        r'\U00026100-\U000275FF' +
-        r'\U00027600-\U000290FF' +
-        r'\U00029100-\U0002A6DF' +
-        r'\uF900-\uFAFF' +  # Compatibility Ideographs
-        r'\U0002F800-\U0002FA1F' +  # Compatibility Ideographs Suppl.
-        r'\u3041-\u3096' +  # Hiragana
-        r'\u30A0-\u30FF' +  # Katakana
-        r'\u3400-\u4DB5' +  # Kanji
-        r'\u4E00-\u9FCB' +
-        r'\uF900-\uFA6A' +
-        r'\u2E80-\u2FD5' +  # Kanji radicals
-        r'\uFF5F-\uFF9F' +  # Katakana and Punctuation (Half Width)
-        r'\u31F0-\u31FF' +  # Miscellaneous Japanese Symbols and Characters
-        r'\u3220-\u3243' +
-        r'\u3280-\u337F'
-    r']'
-)
-
 devangari_word = r'\u0901-\u0963'
 arabic_word = r'\u0601-\u061A' + \
               r'\u061C-\u0669' + \
               r'\u06D5-\u06EF'
 bengali_word = r'\u0980-\u09FF'
-combined_word = devangari_word + arabic_word + bengali_word
+korean_word = r'\uac00-\ud7a3'
 
-word = r'(?:[^\W\d]|[' + combined_word + r'])' + \
+combined_word = devangari_word + arabic_word + bengali_word + korean_word
+
+cjk_re = r'\u3040-\u30ff' + r'\u4e00-\u9FFF'
+
+cjk = r'[' + cjk_re + ']'
+
+word = r'(?:[^\W\d' + cjk_re + r']|[' + combined_word + r'])' + \
        r'[\w' + combined_word + r']*' + \
        r'(?:[\'’](?:[\w' + combined_word + r']+|(?=(?:$|\s))))*'
 
@@ -71,7 +47,6 @@ LEXICON = [
     ("bold", r"'''"),
     ("italic", r"''"),
     ('japan_punct', r'[\u3000-\u303F]'),
-    ('cjk', cjk),
     ('word', word),
     ('tab_open', r'\{\|'),
     ('tab_close', r'\|\}'),
@@ -97,4 +72,10 @@ LEXICON = [
     ("etc", r"."),
 ]
 
-wikitext_split = RegexTokenizer(LEXICON)
+LEXICON_LATIN = LEXICON.copy()
+LEXICON_LATIN.insert(-2, ('cjk', cjk))
+wikitext_split = RegexTokenizer(LEXICON_LATIN)
+
+LEXICON_CJK = LEXICON.copy()
+LEXICON_CJK.insert(0, ('cjk', cjk))
+wikitext_split_cjk = RegexTokenizer(LEXICON_CJK)

@@ -1,6 +1,6 @@
 from nose.tools import eq_
 
-from ..wikitext_split import wikitext_split
+from ..wikitext_split import wikitext_split, wikitext_split_cjk
 
 
 def test_wikitext_split():
@@ -150,6 +150,13 @@ def test_wikitext_split():
         eq_(token, s)
         eq_(token.type, t)
 
+    tokens = list(wikitext_split_cjk.tokenize(input))
+
+    for token, (s, t) in zip(tokens, expected):
+        print(repr(token), (s, t))
+        eq_(token, s)
+        eq_(token.type, t)
+
 
 def test_arabic():
     input = "يرجع الأمويون في نسبهم إلى أميَّة بن عبد شمس من قبيلة قريش."
@@ -179,6 +186,13 @@ def test_arabic():
                 (".", "period")]
 
     tokens = list(wikitext_split.tokenize(input))
+
+    for token, (s, t) in zip(tokens, expected):
+        print(repr(token), (s, t))
+        eq_(token, s)
+        eq_(token.type, t)
+
+    tokens = list(wikitext_split_cjk.tokenize(input))
 
     for token, (s, t) in zip(tokens, expected):
         print(repr(token), (s, t))
@@ -242,6 +256,13 @@ def test_hebrew():
         eq_(token, s)
         eq_(token.type, t)
 
+    tokens = list(wikitext_split_cjk.tokenize(input))
+
+    for token, (s, t) in zip(tokens, expected):
+        print(repr(token), (s, t))
+        eq_(token, s)
+        eq_(token.type, t)
+
 
 def test_hindi():
     input = 'वसा अर्थात चिकनाई शरीर को क्रियाशील बनाए रखने मे सहयोग करती है।'
@@ -272,6 +293,13 @@ def test_hindi():
                 ("।", "danda")]
 
     tokens = list(wikitext_split.tokenize(input))
+
+    for token, (s, t) in zip(tokens, expected):
+        print(repr(token), (s, t))
+        eq_(token, s)
+        eq_(token.type, t)
+
+    tokens = list(wikitext_split_cjk.tokenize(input))
 
     for token, (s, t) in zip(tokens, expected):
         print(repr(token), (s, t))
