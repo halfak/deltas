@@ -13,7 +13,6 @@ url = (
         r'(?:(?:' + '|'.join(SLASHED_PROTO) + r')\:)?\/\/' +
     r')' + ADDRESS
 )
-# re.compile(url, re.U).match("https://website.gov?param=value")
 
 devangari_word = r'\u0901-\u0963'
 arabic_word = r'\u0601-\u061A' + \
@@ -48,6 +47,7 @@ LEXICON = [
     ("italic", r"''"),
     ('japan_punct', r'[\u3000-\u303F]'),
     ('word', word),
+    ('cjk', cjk),
     ('tab_open', r'\{\|'),
     ('tab_close', r'\|\}'),
     ('dbrack_open', r'\[\['),
@@ -72,10 +72,4 @@ LEXICON = [
     ("etc", r"."),
 ]
 
-LEXICON_LATIN = LEXICON.copy()
-LEXICON_LATIN.insert(-2, ('cjk', cjk))
-wikitext_split = RegexTokenizer(LEXICON_LATIN)
-
-LEXICON_CJK = LEXICON.copy()
-LEXICON_CJK.insert(0, ('cjk', cjk))
-wikitext_split_cjk = RegexTokenizer(LEXICON_CJK)
+wikitext_split = RegexTokenizer(LEXICON)
