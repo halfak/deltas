@@ -44,38 +44,39 @@ class RegexTokenizer(Tokenizer):
             self.regex_korean = re.compile(cjk_lexicon['korean'])
 
     def tokenize(self, text, token_class=None, cjk=False):
-        tokenized_text = [t for t in self._tokenize(text, token_class=token_class)]
+        tokenized_text = [t for t in self._tokenize(text, token_class=token_class)] # noqa
         if cjk is True:
             cjk_symbols = len(self.regex_cjk.findall(text))
             jap_symbols = len(self.regex_japanese.findall(text))
             kor_symbols = len(self.regex_korean.findall(text))
             char_lang_frac = {'japanese': jap_symbols/cjk_symbols,
-                               'korean': kor_symbols/cjk_symbols}
+                              'korean': kor_symbols/cjk_symbols}
             max_char_lang_frac = max(char_lang_frac, key=char_lang_frac.get)
-            # check if at least 1/4 of chars are other than chinese, if not -> run chinese tokenizer
-            if char_lang_frac[max_char_lang_frac]>0.25:
-                tokenized_text = self._cjk_tokenization(tokenized_text, language=max_char_lang_frac, token_class=token_class)
+            # check if at least 1/4 of chars are other than chinese,
+            # if not -> run chinese tokenizer
+            if char_lang_frac[max_char_lang_frac] > 0.25:
+                tokenized_text = self._cjk_tokenization(tokenized_text, language=max_char_lang_frac, token_class=token_class) # noqa
             else:
-                tokenized_text = self._cjk_tokenization(tokenized_text, language='cjk', token_class=token_class)
+                tokenized_text = self._cjk_tokenization(tokenized_text, language='cjk', token_class=token_class) # noqa
         return tokenized_text
 
     def _cjk_tokenization(self, tokenized_text, language, token_class=None):
         token_class = token_class or Token
-        cjk_word_indices = list(filter(lambda x: tokenized_text[x].type == 'cjk_word', range(len(tokenized_text))))
-        
+        cjk_word_indices = list(filter(lambda x: tokenized_text[x].type == 'cjk_word', range(len(tokenized_text)))) # noqa
+
         if language == 'cjk':
             seg = ch_jieba.initialize()
             for i in cjk_word_indices[::-1]:
-                segmented_cjk_token = ','.join(ch_jieba.cut(tokenized_text[i], cut_all=False))
-                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token]
-            return tokenized_text        
+                segmented_cjk_token = ','.join(ch_jieba.cut(tokenized_text[i], cut_all=False)) # noqa
+                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token] # noqa
+            return tokenized_text
 
         if language == 'japanese':
             mode = jp_tokenizer.Tokenizer.SplitMode.B
             seg = jp_dictionary.Dictionary().create()
             for i in cjk_word_indices[::-1]:
-                segmented_cjk_token = [m.surface() for m in seg.tokenize(str(tokenized_text[i]), mode)]
-                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token]
+                segmented_cjk_token = [m.surface() for m in seg.tokenize(str(tokenized_text[i]), mode)] # noqa
+                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token] # noqa
             return tokenized_text
 
         if language == 'korean':
@@ -83,7 +84,7 @@ class RegexTokenizer(Tokenizer):
             for i in cjk_word_indices[::-1]:
                 segmented_cjk_token = seg.nouns(tokenized_text[i])
                 if segmented_cjk_token != []:
-                    tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token]            
+                    tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token] # noqa
             return tokenized_text
 
     def _tokenize(self, text, token_class=None):
