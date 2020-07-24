@@ -17,5 +17,6 @@ from .tokenizer import Tokenizer, RegexTokenizer
 from .token import Token
 from .text_split import text_split
 from .wikitext_split import wikitext_split
+from .wikitext_split_w_cjk import wikitext_split_w_cjk
 
-__all__ = [Tokenizer, RegexTokenizer, Token, text_split, wikitext_split]
+__all__ = [Tokenizer, RegexTokenizer, Token, text_split, wikitext_split, wikitext_split_w_cjk] # noqa
