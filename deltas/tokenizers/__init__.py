@@ -13,10 +13,11 @@ based on a lexicon.
     punctuation, symbols and whitespace as well as wikitext markup elements
     (e.g. ('dcurly_open', "{{") and ('bold', "'''"))
 """
-from .tokenizer import Tokenizer, RegexTokenizer
+from .tokenizer import Tokenizer, RegexTokenizer, CJKProcessor, TokenizerPipeline # noqa
 from .token import Token
 from .text_split import text_split
 from .wikitext_split import wikitext_split
 from .wikitext_split_w_cjk import wikitext_split_w_cjk
 
-__all__ = [Tokenizer, RegexTokenizer, Token, text_split, wikitext_split, wikitext_split_w_cjk] # noqa
+
+__all__ = [Tokenizer, RegexTokenizer, CJKProcessor, TokenizerPipeline, Token, text_split, wikitext_split, wikitext_split_w_cjk] # noqa

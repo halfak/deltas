@@ -1,40 +1,10 @@
-FOLLOW THESE INSTRUCTIONS BEFORE USING CJK TOKENIZATION
-=======================================================
-* **CHINESE**
-* install pkuseg
+FOR IMPROVED JAPANESE TOKENIZER ACCURACY INSTALL FULL DICTIONARY
+================================================================
+
 ```
-pip install pkuseg
-```
-* **JAPANESE**
-* install mecab 
-```
-wget -O mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE"
-tar zxvf mecab-0.996.tar.gz
-cd mecab-0.996 && ./configure && make && make check
-sudo make install
-```
-* install mecab ipadic dictionary
-```
-wget -O mecab-ipadic-2.7.0-20070801.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM"
-tar zxvf mecab-ipadic-2.7.0-20070801.tar.gz
-cd mecab-ipadic-2.7.0-20070801 &&./configure --with-charset=utf8 && make && make check
-sudo make install
-```
-* **KOREAN**
-* install konlpy
-```
-pip install konlpy
-```
-* install Mecab-ko dictionary
-```
-wget https://bitbucket.org/eunjeon/mecab-ko-dic/downloads/mecab-ko-dic-1.6.1-20140814.tar.gz
-tar zxfv mecab-ko-dic-1.6.1-20140814.tar.gz
-cd mecab-ko-dic-1.6.1-20140814
-./configure
-sudo ldconfig
-make
-sudo sh -c 'echo "dicdir=/usr/local/lib/mecab/dic/mecab-ko-dic" > /usr/local/etc/mecabrc'
-sudo make install
+pip install sudachidict_full
+# and link sudachi to dict
+sudachipy link -t full
 ```
 
 Deltas

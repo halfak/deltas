@@ -9,6 +9,30 @@ from sudachipy import tokenizer as jp_tokenizer
 from sudachipy import dictionary as jp_dictionary
 from konlpy.tag import Okt as ko_okt
 
+CH_JIEBA = ch_jieba.Tokenizer()
+JAP_SUDACHY = None
+KOR_KONLPY_OKT = None
+
+
+def get_ch_tokenizer():
+    if CH_JIEBA.initialized is False:
+        CH_JIEBA.initialize()
+    return CH_JIEBA
+
+
+def get_jap_tokenizer():
+    global JAP_SUDACHY
+    if JAP_SUDACHY is None:
+        JAP_SUDACHY = jp_dictionary.Dictionary().create()
+    return JAP_SUDACHY
+
+
+def get_kor_tokenizer():
+    global KOR_KONLPY_OKT
+    if KOR_KONLPY_OKT is None:
+        KOR_KONLPY_OKT = ko_okt()
+    return KOR_KONLPY_OKT
+
 
 class Tokenizer:
     """
@@ -31,14 +55,14 @@ class Tokenizer:
 
 
 class TokenizerPipeline(Tokenizer):
-    def __init__(self, tokenizer, *token_segmenters):
+    def __init__(self, tokenizer, *token_processors):
         self.tokenizer = tokenizer  # start of the pipeline
-        self.token_segmenter = token_segmenters
+        self.token_processors = token_processors
 
     def tokenize(self, text):
         tokens = self.tokenizer.tokenize(text)
-        for token_segmenter in self.token_segmenter:
-            tokens = token_segmenter.segment(tokens)
+        for token_processor in self.token_processors:
+            tokens = token_processor.process(tokens)
         return tokens
 
 
@@ -78,11 +102,11 @@ class RegexTokenizer(Tokenizer):
 
 
 class TokenProcessor:
-    def segment(self, tokenized_text):
+    def process(self, tokenized_text):
         raise NotImplementedError()
 
 
-class CJKSegmenter(TokenProcessor):
+class CJKProcessor(TokenProcessor):
     """
     Uses a cjk_lexicon to decide which tokenizer should be used
     (Chinese, Japanese or Korean).
@@ -92,7 +116,7 @@ class CJKSegmenter(TokenProcessor):
         self.regex_japanese = re.compile(cjk_lexicon['japanese'])
         self.regex_korean = re.compile(cjk_lexicon['korean'])
 
-    def segment(self, tokenized_text, token_class=None):
+    def process(self, tokenized_text, token_class=None):
         token_class = token_class or Token
         text = "".join([tok[:] for tok in tokenized_text if tok.type == 'cjk_word']) # noqa
         cjk_symbols = len(self.regex_cjk.findall(text))
@@ -104,34 +128,34 @@ class CJKSegmenter(TokenProcessor):
         # check if at least 1/4 of chars are other than chinese,
         # if not -> run chinese tokenizer
         if char_lang_frac[max_char_lang_frac] > 0.25:
-            segmented_tokens = self._cjk_segmentation(tokenized_text, language=max_char_lang_frac, token_class=token_class) # noqa
+            processed_tokens = self._cjk_processing(tokenized_text, language=max_char_lang_frac, token_class=token_class) # noqa
         else:
-            segmented_tokens = self._cjk_segmentation(tokenized_text, language='cjk', token_class=token_class) # noqa
-        return segmented_tokens
+            processed_tokens = self._cjk_processing(tokenized_text, language='cjk', token_class=token_class) # noqa
+        return processed_tokens
 
-    def _cjk_segmentation(self, tokenized_text, language, token_class=None):
+    def _cjk_processing(self, tokenized_text, language, token_class=None):
         token_class = token_class or Token
         cjk_word_indices = list(filter(lambda x: tokenized_text[x].type == 'cjk_word', range(len(tokenized_text)))) # noqa
 
         if language == 'cjk':
-            seg = ch_jieba.initialize()
+            seg = get_ch_tokenizer()
             for i in cjk_word_indices[::-1]:
-                segmented_cjk_token = ','.join(ch_jieba.cut(tokenized_text[i], cut_all=False)) # noqa
-                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token] # noqa
+                processed_cjk_token = ','.join(ch_jieba.cut(tokenized_text[i], cut_all=False)) # noqa
+                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in processed_cjk_token] # noqa
             return tokenized_text
 
         if language == 'japanese':
             mode = jp_tokenizer.Tokenizer.SplitMode.B
-            seg = jp_dictionary.Dictionary().create()
+            seg = get_jap_tokenizer()
             for i in cjk_word_indices[::-1]:
-                segmented_cjk_token = [m.surface() for m in seg.tokenize(str(tokenized_text[i]), mode)] # noqa
-                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token] # noqa
+                processed_cjk_token = [m.surface() for m in seg.tokenize(str(tokenized_text[i]), mode)] # noqa
+                tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in processed_cjk_token] # noqa
             return tokenized_text
 
         if language == 'korean':
-            seg = ko_okt()
+            seg = get_kor_tokenizer()
             for i in cjk_word_indices[::-1]:
-                segmented_cjk_token = seg.nouns(tokenized_text[i])
-                if segmented_cjk_token != []:
-                    tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in segmented_cjk_token] # noqa
+                processed_cjk_token = seg.nouns(tokenized_text[i])
+                if processed_cjk_token != []:
+                    tokenized_text[i:i+1] = [token_class(word, type="cjk_word") for word in processed_cjk_token] # noqa
             return tokenized_text

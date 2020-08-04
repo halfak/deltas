@@ -1,1 +1,4 @@
 yamlconf	
+jieba
+konlpy
+sudachipy
