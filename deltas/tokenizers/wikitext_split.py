@@ -1,5 +1,5 @@
 from .tokenizer import RegexTokenizer
-from .lexikon_chars import *
+from . import lexicon_chars
 
 PLAIN_PROTO = [r'bitcoin', r'geo', r'magnet', r'mailto', r'news', r'sips?',
                r'tel', r'urn']
@@ -15,7 +15,9 @@ url = (
     r')' + ADDRESS
 )
 
-combined_word = devangari_word + arabic_word + bengali_word
+combined_word = lexicon_chars.devangari_word + \
+                lexicon_chars.arabic_word + \
+                lexicon_chars.bengali_word
 
 # ?     ab? will match either ‘a’ or ‘ab’
 # []	Used to indicate a set of characters. In a set
@@ -44,9 +46,9 @@ word = r'(?:[^\W\d]|[' + combined_word + r'])' + \
        r'[\w' + combined_word + r']*' + \
        r'(?:[\'’](?:[\w' + combined_word + r']+|(?=(?:$|\s))))*'
 
-cjk_word = r'(?=[' + cjk + r'])' + \
-       r'[' + cjk + r']*' + \
-       r'(?:[\'’](?:[' + cjk + r']+|(?=(?:$|\s))))*'
+cjk_word = r'(?=[' + lexicon_chars.cjk + r'])' + \
+       r'[' + lexicon_chars.cjk + r']*' + \
+       r'(?:[\'’](?:[' + lexicon_chars.cjk + r']+|(?=(?:$|\s))))*'
 
 LEXICON = [
     ('break', r'(?:\n\r?|\r\n)\s*(?:\n\r?|\r\n)+'),
