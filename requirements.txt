@@ -2,3 +2,4 @@ yamlconf
 jieba
 konlpy
 sudachipy
+sudachidict_core

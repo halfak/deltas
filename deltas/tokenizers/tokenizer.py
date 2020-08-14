@@ -153,8 +153,8 @@ class CJKProcessor(TokenProcessor):
         if language == 'cjk':
             seg = get_ch_tokenizer()
             for i in cjk_word_indices[::-1]:
-                processed_cjk_token = ','.join(ch_jieba.cut(tokenized_text[i],
-                                                            cut_all=False))
+                processed_cjk_token = seg.lcut(tokenized_text[i],
+                                               cut_all=False)
                 tokenized_text[i:i+1] = [token_class(word, type="cjk_word")
                                          for word in processed_cjk_token]
             return tokenized_text
