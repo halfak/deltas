@@ -1,4 +1,4 @@
-pytest
+pytest>=4.6.0
 nose
 flake8
 codecov
