@@ -24,7 +24,8 @@ setup(
     url=__url__,  # noqa
     license=__license__,  # noqa
     packages=find_packages(),
-    long_description=read('README.rst'),
+    long_description=read('README.MD'),
+    long_description_content_type="text/markdown",
     install_requires=requirements('requirements.txt'),
     classifiers=[
         "Programming Language :: Python",
