@@ -132,7 +132,8 @@ def test_wikitext_split():
                 (' ', 'whitespace'),
                 ('m80', 'word'),
                 ('<ref name="doi10.1093/qjmam/1.1.287">', 'ref_open'),
-                ('https://web.archive.org/web/20150905180420/http://www.turing.org.uk/sources/biblio3.html', 'url'),
+                ('https://web.archive.org/web/20150905180420/' +
+                 'http://www.turing.org.uk/sources/biblio3.html', 'url'),
                 ('|', 'bar'),
                 ('archive', 'word'),
                 ('-', 'etc'),
