@@ -1,17 +1,4 @@
 from .tokenizer import RegexTokenizer
+from . import lexicon
 
-LEXICON = [
-    ('word',          r'[^\W\d]+'),
-    ('number',        r'[\d]+'),
-    ('period',        r'\.'),
-    ('qmark',         r'\?'),
-    ('epoint',        r'!'),
-    ('comma',         r','),
-    ('colon',         r':'),
-    ('scolon',        r';'),
-    ('break',         r'(\n|\n\r|\r\n)\s*(\n|\n\r|\r\n)+'),
-    ('whitespace',    r'[\n\r\s]+'),
-    ("etc",           r".")
-]
-
-text_split = RegexTokenizer(LEXICON)
+text_split = RegexTokenizer(lexicon.TEXT_SPLIT_LEXICON)

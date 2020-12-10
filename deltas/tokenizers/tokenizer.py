@@ -1,9 +1,6 @@
 import re
-
 import yamlconf
-
 from .token import Token
-
 import jieba as ch_jieba
 from sudachipy import tokenizer as jp_tokenizer
 from sudachipy import dictionary as jp_dictionary
@@ -54,18 +51,6 @@ class Tokenizer:
             return Tokenizer.from_config(config, name, section_key)
 
 
-class TokenizerPipeline(Tokenizer):
-    def __init__(self, tokenizer, *token_processors):
-        self.tokenizer = tokenizer  # start of the pipeline
-        self.token_processors = token_processors
-
-    def tokenize(self, text):
-        tokens = self.tokenizer.tokenize(text)
-        for token_processor in self.token_processors:
-            tokens = token_processor.process(tokens)
-        return tokens
-
-
 class RegexTokenizer(Tokenizer):
     """
     Uses a lexicon of regular expressions and names to tokenize a text string.
@@ -99,6 +84,18 @@ class RegexTokenizer(Tokenizer):
                 tokens[value] = token
 
             yield token
+
+
+class TokenizerPipeline(Tokenizer):
+    def __init__(self, tokenizer, *token_processors):
+        self.tokenizer = tokenizer  # start of the pipeline
+        self.token_processors = token_processors
+
+    def tokenize(self, text):
+        tokens = self.tokenizer.tokenize(text)
+        for token_processor in self.token_processors:
+            tokens = token_processor.process(tokens)
+        return tokens
 
 
 class TokenProcessor:
