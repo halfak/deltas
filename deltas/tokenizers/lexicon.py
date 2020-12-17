@@ -1,3 +1,25 @@
+#       REGEXP CHEATSHEET
+#
+# ?     ab? will match either ‘a’ or ‘ab’
+# []	Used to indicate a set of characters. In a set
+# ^	    If the first character of the set is '^', all the
+#       characters that are not in the set will be matched. For example,
+#       [^5] will match any character except '5'
+# \w	matches any alphanumeric character and the underscore; this is
+#       equivalent to the set [a-zA-Z0-9_]
+# \W	matches any non-alphanumeric character; this is equivalent to
+#       the set [^a-zA-Z0-9_]
+# \d	matches any decimal digit; this is equivalent to the set [0-9]
+# |	    or
+# \s	matches any whitespace character, this is equivalent to the
+#       set [ \t\n\r\f\v]
+# $	    Matches the end of the string or just before the newline at the
+#       end of the string
+# *     match 0 or more repetitions of the preceding RE, as many repetitions as
+#       are possible. ab* will match ‘a’, ‘ab’, or ‘a’ followed by any number
+#       of ‘b’s.
+# \b    used to find a match at the beginning or end of a word.
+
 # Unified Ideographs, Unified Ideographs Ext A,
 # Unified Ideographs Ext. B, Compatibility Ideographs,
 # Compatibility Ideographs Suppl.
@@ -50,9 +72,14 @@ arabic_char = r'\u0601-\u061A' + \
 
 bengali_char = r'\u0980-\u09FF'
 
-combined_char = devangari_word + \
-                arabic_word + \
-                bengali_word
+combined_char = devangari_char + \
+                arabic_char + \
+                bengali_char
+
+
+# (anything that is not(non-alphanmeric, decimal digit) or is combined_char) +
+# any number of combined_char repetitions +
+# any number of combined_char repetitions encapsulated in apostrophes
 
 word = r'(?:[^\W\d]|[' + combined_char + r'])' + \
        r'[\w' + combined_char + r']*' + \
@@ -74,31 +101,19 @@ url = (
     r')' + address
 )
 
+# [previously in mwtext] 
 # Matches 10, 10.2, 3.123e10, 100,000,000, etc.
-number = r"\b[0-9][0-9\.\,]*(e[0-9]+)?s?\b"
+# number = r"\b[0-9][0-9\.\,]*(e[0-9]+)?s?\b"
 
-# ?     ab? will match either ‘a’ or ‘ab’
-# []	Used to indicate a set of characters. In a set
-# ^	    If the first character of the set is '^', all the
-#       characters that are not in the set will be matched. For example,
-#       [^5] will match any character except '5'
-# \w	matches any alphanumeric character and the underscore; this is
-#       equivalent to the set [a-zA-Z0-9_]
-# \W	matches any non-alphanumeric character; this is equivalent to
-#       the set [^a-zA-Z0-9_]
-# \d	matches any decimal digit; this is equivalent to the set [0-9]
-# |	    or
-# \s	matches any whitespace character, this is equivalent to the
-#       set [ \t\n\r\f\v]
-# $	    Matches the end of the string or just before the newline at the
-#       end of the string
-# *     match 0 or more repetitions of the preceding RE, as many repetitions as
-#       are possible. ab* will match ‘a’, ‘ab’, or ‘a’ followed by any number
-#       of ‘b’s.
+# [previously in deltas]
+# number = r'\d+'
 
-# (anything that is not(non-alphanmeric, decimal digit) or word_char) +
-# any number of word_char repetitions +
-# any number of word_char repetitions encapsulated in apostrophes
+# [new version]
+# https://rubular.com/r/UlCjL9VRfJqnyt
+# https://rubular.com/r/3HCSkndzhT 
+# https://stackoverflow.com/questions/5917082/regular-expression-to-match-numbers-with-or-without-commas-and-decimals-in-text 
+number = r'[0-9][0-9\.\,]*|[\.\,][0-9][0-9\.\,]*'
+
 
 
 TEXT_SPLIT_LEXICON = [
