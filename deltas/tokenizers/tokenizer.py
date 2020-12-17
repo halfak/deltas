@@ -1,7 +1,7 @@
 import re
 import yamlconf
 from .token import Token
-import deltas.tokenizers.cjk_tokenization as cjk_tokenization
+from . import cjk_tokenization
 
 
 class Tokenizer:
