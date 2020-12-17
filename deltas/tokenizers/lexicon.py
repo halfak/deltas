@@ -101,20 +101,7 @@ url = (
     r')' + address
 )
 
-# [previously in mwtext] 
-# Matches 10, 10.2, 3.123e10, 100,000,000, etc.
-# number = r"\b[0-9][0-9\.\,]*(e[0-9]+)?s?\b"
-
-# [previously in deltas]
-# number = r'\d+'
-
-# [new version]
-# https://rubular.com/r/UlCjL9VRfJqnyt
-# https://rubular.com/r/3HCSkndzhT 
-# https://stackoverflow.com/questions/5917082/regular-expression-to-match-numbers-with-or-without-commas-and-decimals-in-text 
-number = r'[0-9][0-9\.\,]*|[\.\,][0-9][0-9\.\,]*'
-
-
+number = r'[0-9][0-9\.\,]*(e[0-9]+)*|[\.\,][0-9][0-9\.\,]*(e[0-9]+)*'
 
 TEXT_SPLIT_LEXICON = [
     ('word', r'[^\W\d]+'),

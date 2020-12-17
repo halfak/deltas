@@ -3,6 +3,7 @@ import yamlconf
 from .token import Token
 import deltas.tokenizers.cjk_tokenization as cjk_tokenization
 
+
 class Tokenizer:
     """
     Constructs a tokenizaton strategy.
@@ -92,12 +93,12 @@ class CJKProcessor(TokenProcessor):
                                                 token_class=token_class)
         return processed_tokens
 
-
     def _lng_decision(self, tokenized_text):
         text = "".join([tok[:]
                         for tok in tokenized_text
                         if tok.type == 'cjk_word'])
-        language = cjk_tokenization.lng_decision(text, self.cjk_lexicon, self.lng_frac_par)
+        language = cjk_tokenization.lng_decision(text, self.cjk_lexicon,
+                                                 self.lng_frac_par)
         return language
 
     def _cjk_processing(self, tokenized_text, language, token_class=None):
@@ -106,11 +107,13 @@ class CJKProcessor(TokenProcessor):
                                 lambda x:
                                 tokenized_text[x].type == 'cjk_word',
                                 range(len(tokenized_text))))
-        
-        # go from last to first, "unpack" CJK "words" and assign "cjk_word" to them
+
+        # go from the last to first,
+        # "unpack" CJK "words" and assign "cjk_word" to them
         for i in cjk_word_indices[::-1]:
-            processed_cjk_token = cjk_tokenization.CJK_tokenization(tokenized_text[i], language)
+            proc_cjk_token = cjk_tokenization.CJK_tokenization(
+                                           tokenized_text[i], language)
             tokenized_text[i:i+1] = [token_class(word, type="cjk_word")
-                                     for word in processed_cjk_token]
+                                     for word in proc_cjk_token]
 
         return tokenized_text

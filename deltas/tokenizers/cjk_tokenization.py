@@ -34,7 +34,7 @@ def lng_decision(text, cjk_lexicon, lng_frac_par=0.25):
     regex_cjk = re.compile(cjk_lexicon['cjk'])
     regex_japanese = re.compile(cjk_lexicon['japanese'])
     regex_korean = re.compile(cjk_lexicon['korean'])
-        
+
     cjk_symbols = len(regex_cjk.findall(text))
     jap_symbols = len(regex_japanese.findall(text))
     kor_symbols = len(regex_korean.findall(text))
@@ -59,8 +59,8 @@ def CJK_tokenization(text, language):
         mode = jp_tokenizer.Tokenizer.SplitMode.B
         seg = get_jap_tokenizer()
         processed_text = [m.surface()
-                               for m in seg.tokenize(str(text), # noqa
-                               mode)]
+                          for m in seg.tokenize(str(text),
+                          mode)]
 
     if language == 'korean':
         seg = get_kor_tokenizer()
