@@ -119,6 +119,7 @@ TEXT_SPLIT_LEXICON = [
 
 CJK_LEXICON = {
     'cjk': r'[' + cjk_char + r']',
+    'chinese': r'[' + chinese_n_misc_char + r']',
     'japanese': r'[' + jap_char + r']',
     'korean': r'[' + kor_char + r']',
 }
