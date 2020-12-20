@@ -64,9 +64,6 @@ def CJK_tokenization(text, language):
 
     if language == 'korean':
         seg = get_kor_tokenizer()
-        processed_text = seg.nouns(text)
-        # this is a "feature" in Korean tokenizer
-        if processed_text == []:
-            processed_text = [text]
+        processed_text = [m[0] for m in seg.pos(text)]
 
     return processed_text
