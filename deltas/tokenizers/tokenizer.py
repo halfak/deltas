@@ -88,9 +88,12 @@ class CJKProcessor(TokenProcessor):
     def process(self, tokenized_text, token_class=None):
         token_class = token_class or Token
         language = self._lng_decision(tokenized_text)
-        processed_tokens = self._cjk_processing(tokenized_text,
-                                                language=language,
-                                                token_class=token_class)
+        if language != 'other':
+            processed_tokens = self._cjk_processing(tokenized_text,
+                                                    language=language,
+                                                    token_class=token_class)
+        else:
+            processed_tokens = tokenized_text
         return processed_tokens
 
     def _lng_decision(self, tokenized_text):
