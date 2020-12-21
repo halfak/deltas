@@ -13,7 +13,7 @@ based on a lexicon.
     punctuation, symbols and whitespace as well as wikitext markup elements
     (e.g. ('dcurly_open', "{{") and ('bold', "'''"))
 
-**deltas.wikitext_w_split**
+**deltas.wikitext_spli_w_cjk**
     a :class:`~deltas.TokenizerPipeline` that splits text into words,
     punctuation, symbols and whitespace as well as wikitext markup elements
     (e.g. ('dcurly_open', "{{") and ('bold', "'''")) and performs additional
