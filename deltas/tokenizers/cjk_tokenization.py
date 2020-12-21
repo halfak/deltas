@@ -30,7 +30,7 @@ def get_kor_tokenizer():
     return KOR_KONLPY_OKT
 
 
-def lng_decision(text, cjk_lexicon, lng_frac_par=0.25):
+def lng_decision(text, cjk_lexicon, lng_frac_par=0.25, bck_ch_frac=0.5):
     regex_cjk = re.compile(cjk_lexicon['cjk'])
     regex_ch = re.compile(cjk_lexicon['chinese'])
     regex_japanese = re.compile(cjk_lexicon['japanese'])
@@ -52,7 +52,7 @@ def lng_decision(text, cjk_lexicon, lng_frac_par=0.25):
         if char_lng_frac[max_char_lng_frac] > lng_frac_par:
             language = max_char_lng_frac
 
-        elif ch_symbols/cjk_symbols > 0.5:
+        elif ch_symbols/cjk_symbols > bck_ch_frac:
             language = 'chinese'
 
         else:
