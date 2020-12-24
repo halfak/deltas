@@ -1,5 +1,5 @@
 __name__ = "deltas"
-__version__ = "0.6.0"
+__version__ = "0.6.1"
 __author__ = "Aaron Halfaker"
 __author_email__ = "aaron.halfaker@gmail.com"
 __description__ = "An experimental diff library for generating " + \
