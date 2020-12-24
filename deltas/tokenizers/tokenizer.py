@@ -81,16 +81,20 @@ class CJKProcessor(TokenProcessor):
     Uses a cjk_lexicon to decide which tokenizer should be used
     (Chinese, Japanese or Korean).
     """
-    def __init__(self, cjk_lexicon, lng_frac_par=0.25):
+    def __init__(self, cjk_lexicon, lng_frac_par=0.25, bck_ch_frac=0.5):
         self.cjk_lexicon = cjk_lexicon
         self.lng_frac_par = lng_frac_par
+        self.bck_ch_frac = bck_ch_frac
 
     def process(self, tokenized_text, token_class=None):
         token_class = token_class or Token
         language = self._lng_decision(tokenized_text)
-        processed_tokens = self._cjk_processing(tokenized_text,
-                                                language=language,
-                                                token_class=token_class)
+        if language != 'other':
+            processed_tokens = self._cjk_processing(tokenized_text,
+                                                    language=language,
+                                                    token_class=token_class)
+        else:
+            processed_tokens = tokenized_text
         return processed_tokens
 
     def _lng_decision(self, tokenized_text):
@@ -98,7 +102,8 @@ class CJKProcessor(TokenProcessor):
                         for tok in tokenized_text
                         if tok.type == 'cjk_word'])
         language = cjk_tokenization.lng_decision(text, self.cjk_lexicon,
-                                                 self.lng_frac_par)
+                                                 self.lng_frac_par,
+                                                 self.bck_ch_frac)
         return language
 
     def _cjk_processing(self, tokenized_text, language, token_class=None):
