@@ -19,7 +19,7 @@ def test_segment():
 
     tokens = wikitext_split.tokenize(text)
     segments = list(segmenter.segment(tokens))
-    print([str(s) for s in segments[0]])
+    #print([str(s) for s in segments[0]])
 
     eq_(len(segments), 3)  # 2 paragraphs + 1 whitespace
 
@@ -30,3 +30,12 @@ def test_segment():
     eq_(type(segments[2][2]), MatchableSegment)
 
     eq_(''.join(str(s) for s in segments), text)
+
+    text = """
+I'm a little sentence
+
+was vijf toen haar vader overleed. Ze werd opgevoed in de harem waarin haar moeder en de eerste vrouw van haar vader woonden.
+    """
+    tokens = wikitext_split.tokenize(text)
+    segments = list(segmenter.segment(tokens))
+    assert len(segments) == 4

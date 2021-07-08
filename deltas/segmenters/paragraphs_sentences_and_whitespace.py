@@ -95,7 +95,7 @@ class ParagraphsSentencesAndWhitespace(Segmenter):
                         sentence = MatchableSegment(
                             look_ahead.i, [next(look_ahead)])
                         sub_depth = int(sentence[0].type in SUB_OPEN)
-                        while not look_ahead.empty():
+                        while not look_ahead.empty() and look_ahead.peek().type not in self.paragraph_end:
 
                             sub_depth += look_ahead.peek().type in SUB_OPEN
                             sub_depth -= look_ahead.peek().type in SUB_CLOSE
