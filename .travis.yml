@@ -14,7 +14,7 @@ before_install: {}
 install:
   - pip install -r requirements.txt
 #  - pip install -r docs/requirements.txt
-  - pip install -r test-requirements.txt
+  - pip install -r test-requirements.txt --upgrade
   - pip install twine
 script:
   - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,docs
