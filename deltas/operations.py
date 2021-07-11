@@ -103,7 +103,7 @@ class Equal(Operation):
         return Operation.__new__(cls, "equal", a1, a2, b1, b2)
 
     def relevant_tokens(self, a, b):
-        return a[self.a1:self.a2]
+        return b[self.b1:self.b2]
 
 
 def print_operations(operations, a, b):
